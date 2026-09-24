@@ -1,6 +1,6 @@
 # Low-Cost Multichannel sEMG Control Interface for Upper-Limb Prosthetic Rehabilitation
 
-**Final Year Project** -- B.Eng. Electronics & Computer Engineering, JKUAT (2026-2027)
+**Final Year Project** -- B.Sc. Electronics & Computer Engineering, JKUAT (2022-2027)
 
 A 4-channel surface EMG acquisition and classification system for myoelectric prosthetic control, built for under $20 in component cost.
 
