@@ -1,0 +1,46 @@
+# === Python / ML ===
+ml/venv/
+ml/data/ninapro_db5/          # NinaPro is large + license restricts redistribution
+ml/data/processed/*.npy        # Regenerable from scripts
+ml/models/*.keras              # Large float32 models (keep .tflite only)
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# === PlatformIO / Firmware ===
+firmware/.pio/
+firmware/.vscode/
+
+# === KiCad ===
+hardware/kicad/*-backups/
+hardware/kicad/*.kicad_prl
+hardware/kicad/fp-info-cache
+
+# === Simulation ===
+hardware/simulation/*.raw      # ngspice raw output (regenerable)
+
+# === Obsidian ===
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/graph.json
+.obsidian/plugins/
+.obsidian/themes/
+
+# === OS / Editor ===
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+
+# === Large binaries (track with Git LFS or keep out) ===
+*.mp4
+*.zip
+*.tar.gz
+
+# === Test data (large, per-subject recordings) ===
+tests/subject_data/*/raw/      # Raw ADC CSVs can be huge
+
+# LibreOffice lock files
+.~lock.*
