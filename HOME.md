@@ -1,6 +1,6 @@
 # FYP -- Low-Cost sEMG Prosthetic Control
 
-**Ian Kiarie** | ENE212-0069/2022 | JKUAT ECE | 2026-2027
+**Ian Kiarie** | ENE212-0069/2022 | JKUAT ECE | 2022-2027
 **Supervisor:** Dr Irene
 
 ---

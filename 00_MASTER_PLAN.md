@@ -1,5 +1,5 @@
 # sEMG Prosthetic Control — Master Project Plan
-## Ian Kiarie | B.Eng. ECE | JKUAT | FYP 2026/2027
+## Ian Kiarie | B.Sc. ECE | JKUAT | FYP 2022-2027
 
 ---
 
