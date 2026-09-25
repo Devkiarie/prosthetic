@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -17,9 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ian.myocontrol.core.theme.McColors
 
-// ---------------------------------------------------------------------------
-// McCard -- standard surface card
-// ---------------------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────────────────
+// McCard — elevated white card (light) / dark surface card (dark mode)
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
 fun McCard(
@@ -27,34 +28,36 @@ fun McCard(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = McColors.CardBackground),
+        modifier  = modifier.shadow(elevation = 3.dp, shape = RoundedCornerShape(20.dp)),
+        shape     = RoundedCornerShape(20.dp),
+        colors    = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            content = content
+            modifier = Modifier.padding(18.dp),
+            content  = content
         )
     }
 }
 
-// ---------------------------------------------------------------------------
-// McConfidenceBar -- animated horizontal progress bar
-// ---------------------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────────────────
+// McConfidenceBar — animated rounded progress bar
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
 fun McConfidenceBar(
-    confidence: Float,            // 0.0 - 1.0
-    modifier: Modifier = Modifier,
-    height: Dp = 8.dp,
-    trackColor: Color = McColors.SurfaceVariant,
-    fillColor: Color = McColors.Accent
+    confidence:  Float,            // 0.0 – 1.0
+    modifier:    Modifier = Modifier,
+    height:      Dp = 8.dp,
+    trackColor:  Color = MaterialTheme.colorScheme.surfaceVariant,
+    fillColor:   Color = McColors.Coral
 ) {
     val animatedProgress by animateFloatAsState(
-        targetValue = confidence.coerceIn(0f, 1f),
-        animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing),
-        label = "confidence"
+        targetValue    = confidence.coerceIn(0f, 1f),
+        animationSpec  = tween(durationMillis = 400, easing = FastOutSlowInEasing),
+        label          = "confidence"
     )
 
     Box(
@@ -78,16 +81,16 @@ fun McConfidenceBar(
     }
 }
 
-// ---------------------------------------------------------------------------
-// McChannelBar -- single channel signal quality indicator
-// ---------------------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────────────────
+// McChannelBar — signal quality indicator row
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
 fun McChannelBar(
-    label: String,
-    rms: Float,
+    label:        String,
+    rms:          Float,
     channelColor: Color,
-    modifier: Modifier = Modifier
+    modifier:     Modifier = Modifier
 ) {
     val quality = when {
         rms >= 0.8f -> "EXCELLENT"
@@ -97,52 +100,52 @@ fun McChannelBar(
     }
     val qualityColor = when {
         rms >= 0.8f -> McColors.Success
-        rms >= 0.6f -> McColors.Accent
+        rms >= 0.6f -> McColors.Coral
         rms >= 0.4f -> McColors.Warning
         else        -> McColors.Error
     }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier          = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = McColors.TextSecondary,
-            modifier = Modifier.width(28.dp)
+            text     = label,
+            style    = MaterialTheme.typography.labelMedium,
+            color    = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.width(32.dp)
         )
         McConfidenceBar(
-            confidence = rms,
-            modifier = Modifier.weight(1f),
-            height = 6.dp,
-            fillColor = channelColor
+            confidence   = rms,
+            modifier     = Modifier.weight(1f),
+            height       = 6.dp,
+            fillColor    = channelColor
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(10.dp))
         Text(
-            text = quality,
-            style = MaterialTheme.typography.labelSmall,
-            color = qualityColor,
-            modifier = Modifier.width(64.dp)
+            text     = quality,
+            style    = MaterialTheme.typography.labelSmall,
+            color    = qualityColor,
+            modifier = Modifier.width(68.dp)
         )
     }
 }
 
-// ---------------------------------------------------------------------------
-// McStatusDot -- animated pulsing status indicator
-// ---------------------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────────────────
+// McStatusDot — animated pulsing connection indicator
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
 fun McStatusDot(
     connected: Boolean,
-    modifier: Modifier = Modifier
+    modifier:  Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val alpha by infiniteTransition.animateFloat(
         initialValue = if (connected) 0.4f else 1f,
-        targetValue = 1f,
+        targetValue  = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(800, easing = FastOutSlowInEasing),
+            animation  = tween(800, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "dot_alpha"
@@ -157,29 +160,29 @@ fun McStatusDot(
     )
 }
 
-// ---------------------------------------------------------------------------
-// McStatCard -- small 2-line metric tile
-// ---------------------------------------------------------------------------
+// ─────────────────────────────────────────────────────────────────────────────
+// McStatCard — small 2-line metric tile
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
 fun McStatCard(
-    value: String,
-    label: String,
-    modifier: Modifier = Modifier,
-    valueColor: Color = McColors.Accent
+    value:      String,
+    label:      String,
+    modifier:   Modifier = Modifier,
+    valueColor: Color = McColors.Coral
 ) {
     McCard(modifier = modifier) {
         Text(
-            text = value,
-            fontSize = 22.sp,
+            text       = value,
+            fontSize   = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = valueColor
+            color      = valueColor
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = label,
+            text  = label,
             style = MaterialTheme.typography.labelSmall,
-            color = McColors.TextSecondary
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

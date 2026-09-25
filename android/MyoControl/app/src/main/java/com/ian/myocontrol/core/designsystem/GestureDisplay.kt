@@ -3,8 +3,8 @@ package com.ian.myocontrol.core.designsystem
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,9 +21,8 @@ import com.ian.myocontrol.domain.model.GestureLabel
 import com.ian.myocontrol.domain.model.GestureResult
 
 /**
- * Maps each GestureLabel to a text symbol.
- * No emojis in source -- these are unicode block characters + arrows used as
- * symbolic hand representations. Safe to use in Text() on all API levels.
+ * Maps each GestureLabel to a descriptive unicode symbol.
+ * Safe on all API levels — no emoji.
  */
 fun gestureSymbol(label: GestureLabel): String = when (label) {
     GestureLabel.REST        -> " -- "
@@ -37,41 +36,53 @@ fun gestureSymbol(label: GestureLabel): String = when (label) {
 }
 
 /**
- * The large gesture display card shown in the center of HomeScreen.
- * Animates between gesture transitions with a crossfade.
+ * Hero gesture card — warm peach gradient background, decorative circle backdrop,
+ * animated gesture name + confidence bar.
+ * Matches the reference "Open Hand / 94% CONFIDENCE" card style.
  */
 @Composable
 fun GestureDisplayCard(
     gestureResult: GestureResult?,
     modifier: Modifier = Modifier
 ) {
-    val label = gestureResult?.let { GestureLabel.fromClass(it.gestureClass) } ?: GestureLabel.REST
+    val label      = gestureResult?.let { GestureLabel.fromClass(it.gestureClass) } ?: GestureLabel.REST
     val confidence = gestureResult?.confidence ?: 0f
-    val latency = gestureResult?.latencyMs ?: 0
+    val latency    = gestureResult?.latencyMs ?: 0
 
     val confidenceColor = when {
         confidence >= 0.90f -> McColors.Success
-        confidence >= 0.75f -> McColors.Accent
+        confidence >= 0.75f -> McColors.Coral
         confidence >= 0.60f -> McColors.Warning
         else                -> McColors.Error
     }
 
-    McCard(
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                brush = Brush.verticalGradient(
-                    listOf(McColors.Accent.copy(alpha = 0.3f), McColors.Border)
-                ),
-                shape = RoundedCornerShape(16.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(McColors.HeroCardStart, McColors.HeroCardEnd)
+                )
             )
+            .padding(20.dp)
     ) {
+        // Decorative backdrop circle (low-opacity, behind content)
+        Box(
+            modifier = Modifier
+                .size(140.dp)
+                .align(Alignment.CenterStart)
+                .offset(x = (-20).dp)
+                .clip(CircleShape)
+                .background(McColors.Coral.copy(alpha = 0.10f))
+        )
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Symbol (crossfade on change)
+
+            // Symbol — monospace, crossfades on change
             AnimatedContent(
                 targetState = gestureSymbol(label),
                 transitionSpec = {
@@ -80,17 +91,17 @@ fun GestureDisplayCard(
                 label = "gesture_symbol"
             ) { symbol ->
                 Text(
-                    text = symbol,
-                    fontSize = 48.sp,
+                    text       = symbol,
+                    fontSize   = 52.sp,
                     fontWeight = FontWeight.Light,
-                    color = McColors.Accent,
+                    color      = McColors.Coral,
                     fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // Gesture name (crossfade on change)
+            // Gesture name — slides up on change
             AnimatedContent(
                 targetState = label.displayName,
                 transitionSpec = {
@@ -100,54 +111,60 @@ fun GestureDisplayCard(
                 label = "gesture_name"
             ) { name ->
                 Text(
-                    text = name.uppercase(),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = McColors.TextPrimary,
+                    text      = name.uppercase(),
+                    style     = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color     = McColors.TextPrimary,
                     textAlign = TextAlign.Center
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
-            // Confidence bar + label
+            // Confidence bar
             McConfidenceBar(
                 confidence = confidence,
                 fillColor  = confidenceColor,
-                modifier   = Modifier.fillMaxWidth()
+                modifier   = Modifier.fillMaxWidth(),
+                height     = 8.dp
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
+            // Confidence % row
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Confidence",
+                    text  = "CONFIDENCE",
                     style = MaterialTheme.typography.labelSmall,
-                    color = McColors.TextSecondary
+                    color = McColors.TextSecondary,
+                    letterSpacing = 0.8.sp
                 )
                 Text(
-                    text = "${"%.1f".format(confidence * 100)}%",
-                    style = MaterialTheme.typography.labelSmall,
+                    text       = "${"%.1f".format(confidence * 100)}%",
+                    style      = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = confidenceColor
+                    color      = confidenceColor
                 )
             }
 
             Spacer(modifier = Modifier.height(4.dp))
 
+            // Latency row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Latency",
+                    text  = "Latency",
                     style = MaterialTheme.typography.labelSmall,
                     color = McColors.TextSecondary
                 )
                 Text(
-                    text = "${latency} ms",
+                    text  = "${latency} ms",
                     style = MaterialTheme.typography.labelSmall,
                     color = McColors.TextSecondary
                 )
