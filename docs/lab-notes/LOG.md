@@ -126,3 +126,60 @@ Each entry: Date | Session # | What was done | Measurements (actual, not targets
 **Next session:** Run explore_ninapro.py for all 10 subjects. Combine into full dataset. Undersample Rest. Train baseline SVM. If SVM >= 0.70 F1, proceed to CNN.
 
 ---
+
+## [2026-09-25] Session 4 | Notebook Rebuild + Jupyter Workflow Clarification
+
+**Done:**
+- Identified broken DATA_DIR path in notebook (sed patch had mangled it -- `Files found: []`)
+- Rebuilt 01_data_exploration.ipynb from scratch with 9 clean cells:
+  - Cell 1: imports + path check (verifies 10 subject folders found)
+  - Cell 2: constants (channel selection, gesture map)
+  - Cell 3: helper functions (load_subject, remap_labels, extract_features, windowed_features)
+  - Cell 4: load + inspect Subject 1
+  - Cell 5: 60-second session plot
+  - Cell 6: gesture grid (1 rep per gesture x 4 channels)
+  - Cell 7: feature extraction Subject 1 only
+  - Cell 8: feature extraction all 10 subjects (~2 min)
+  - Cell 9: balance Rest class, save X_balanced.npy + y_balanced.npy
+- Full "from the top" explanation of the sEMG ML pipeline written for Kiarie
+- Committed and pushed to GitHub
+
+**Measurements:** N/A (notebook rebuild session)
+
+**Pass/Fail:** N/A
+
+**Next session:** Open Jupyter (bash launch_jupyter.sh -> http://localhost:8890), run notebook cells 1-9 in order. After Cell 9 completes, X_balanced.npy and y_balanced.npy will be saved and we move to CNN training.
+
+---
+
+## [2026-09-25] Session 5 | Full Dataset Extraction + Feature Pipeline Complete
+
+**Done:**
+- Ran notebook 01_data_exploration.ipynb cells 1-9 successfully
+- All 10 subjects loaded, features extracted, plots generated inline in Jupyter
+- Cell 8: all 10 subjects extracted (all_subjects dataset)
+- Cell 9: Rest class balanced, final dataset saved
+
+**Measurements:**
+| Metric | Value |
+|---|---|
+| Total windows (all 10 subjects, unbalanced) | ~112,000 |
+| X_all_subjects.npy shape | (112k+, 24) |
+| X_balanced.npy shape | (37,308, 24) |
+| y_balanced.npy shape | (37,308,) |
+| Rest windows (balanced) | 4,663 |
+| Open hand | 4,239 |
+| Power grasp | 5,307 |
+| Pinch | 3,766 |
+| Point | 5,785 |
+| Wrist flex | 4,671 |
+| Wrist ext | 4,751 |
+| Thumbs up | 4,126 |
+| Feature vector size | 24 (6 per channel x 4 channels) |
+| Feature dtype | float32 |
+
+**Pass/Fail:** PASS -- all 8 classes present across all subjects, dataset balanced and saved
+
+**Next session:** CNN training notebook (02_cnn_training.ipynb). Input: X_balanced.npy + y_balanced.npy. Target: F1 > 0.85 on held-out test set.
+
+---
