@@ -398,3 +398,45 @@ BOM delta: ~KES 650 (~USD 5). Still under USD 20 BOM. PCA9685 already in BOM and
 
 ### Design Tool Guidance Written
 See below in response — Tinkercad / Fusion 360 / Blender + Bambu/Creality printer workflow.
+
+## Session 17 — 2026-09-25 Ada Hand STL Downloaded + 3D Tools Installed
+**Commit:** 8150729
+
+### Downloaded
+- Open Bionics Ada Hand v1.1 STL files → `hardware/hand_stl/Ada_3D_model_files/`
+- Added as git submodule (CC BY-SA 4.0 license)
+- Palm: 174×193×42mm — 42mm depth fits SG90 servos (29mm tall) ✓
+- Blender source file included: `Blender Files/Right Hand/Ada Right v1.1.blend`
+
+### Tools Installed on Linux
+- MeshLab: `sudo apt install meshlab` — view/inspect STLs
+- OpenSCAD: `sudo apt install openscad` — parametric scripting
+- Blender 5.2: `sudo snap install blender --classic` (installing)
+- numpy-stl + trimesh: `pip3 install numpy-stl trimesh` — scripted manipulation
+
+### Next Steps for Hand Design
+1. Open Ada Right v1.1.blend in Blender
+2. Add 5× SG90 servo pockets to dorsal palm
+3. Add 2mm tendon channels through each finger
+4. Add MG996R pocket at wrist base
+5. Print test finger phalanx first before full print
+
+## Session 18 — 2026-09-25 Session Wrap-Up
+**Commits:** see below
+
+### Summary of all work completed today (2026-09-25)
+- Sessions 1–5: ngspice sims, TF stack, NinaPro download, ML notebook, X_balanced.npy
+- Sessions 6–8: MyoControl Android scaffold, HomeScreen, Phase 2 fake classifier
+- Session 9: KSP version fix (kotlin/ksp 2.1.0)
+- Session 10–11: compileSdk 35 fix, gradle.properties heap, launcher icons
+- Session 12: Cream+FM black theme, peach hero card, decorative blobs
+- Session 13: BLE SecurityException fixed (runtime permissions), Settings screen
+- Session 14: Canvas gesture illustrations (8 hand poses), BLE device picker
+- Session 15: BLE picker dismiss fix, navigation unblocked
+- Session 16: Actuator upgraded 2-DOF gripper → 5-finger tendon hand
+- Session 17: Ada Hand v1.1 STLs downloaded, tools installed (Blender/FreeCAD/OpenSCAD)
+- Session 18: gradle google-fonts dep added by Android Studio; cleanup; wrap-up
+
+### Android Studio auto-changes committed
+- libs.versions.toml: added androidx-ui-text-google-fonts library alias
+- build.gradle.kts: added google fonts implementation dependency (needed for Manrope)
