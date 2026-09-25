@@ -89,3 +89,40 @@ Each entry: Date | Session # | What was done | Measurements (actual, not targets
 
 ---
 
+
+## [2026-09-25] Session 3 | NinaPro DB5 Real Data Exploration
+
+**Done:**
+- All 10 subjects downloaded and extracted (S1-S10, 30 .mat files, ~200 MB)
+- Correct path pattern confirmed: `ml/data/ninapro_db5/S{N}/s{N}/S{N}_E1_A1.mat`
+- EMG data format confirmed: 8-bit signed integers [-128, 127] (Myo Armband quantisation)
+- Wrote `ml/scripts/explore_ninapro.py` (reusable, all 10 subjects)
+- Ran full Subject 1 pipeline:
+  - Loaded 130,267 samples x 16 channels, 651 s duration
+  - Selected 4 channels [0, 4, 8, 12]
+  - Remapped labels -- all 8 gesture classes confirmed present
+  - Windowed feature extraction: 11,205 windows x 24 features
+  - Saved S1_X_features.npy (11205, 24) and S1_y_labels.npy (11205,)
+- Generated two plots:
+  - `real_semg_session.png`: 60 s overview, 4 channels, gesture regions shaded
+  - `gesture_grid.png`: 1 repetition per gesture x 4 channels
+- Updated ml-pipeline/ninapro-exploration.md vault note
+
+**Measurements (Subject 1, real data):**
+| Metric | Value |
+|---|---|
+| Recording duration | 651.3 s |
+| Samples | 130,267 @ 200 Hz |
+| EMG range | -128 to +127 (8-bit Myo units) |
+| Windows extracted | 11,205 |
+| Rest windows | 8,204 (73%) |
+| Gesture windows (each) | 382 -- 505 per class |
+| Feature vector size | 24 (6 features x 4 channels) |
+
+**Pass/Fail:** Pipeline PASS -- all 8 gesture classes present, feature extraction correct
+
+**Key finding:** Class imbalance -- Rest class (73%) dominates. Must undersample before training to avoid classifier predicting Rest always.
+
+**Next session:** Run explore_ninapro.py for all 10 subjects. Combine into full dataset. Undersample Rest. Train baseline SVM. If SVM >= 0.70 F1, proceed to CNN.
+
+---
