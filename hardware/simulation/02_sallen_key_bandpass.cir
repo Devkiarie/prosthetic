@@ -43,6 +43,7 @@ RLOAD  NLPF_OUT  0  1MEG
 .AC DEC 200 1 10K
 
 .CONTROL
+  set filetype=ascii
   run
   * Passband gain at 100 Hz and 250 Hz
   meas ac gain_100hz FIND vdb(nlpf_out) AT=100

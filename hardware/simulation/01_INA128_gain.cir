@@ -29,6 +29,7 @@ RLOAD  OUT  0  100K
 .AC DEC 100 1 1MEG
 
 .CONTROL
+  set filetype=ascii
   run
   plot vdb(out) title "INA128 Gain (dB) — target 34 dB at 100 Hz"
   meas ac gain_100hz FIND vdb(out) AT=100
