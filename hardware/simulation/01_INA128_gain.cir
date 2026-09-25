@@ -1,0 +1,41 @@
+* =============================================================
+* Simulation 01: INA128 Instrumentation Amplifier — Gain & Bandwidth
+* Project: sEMG Prosthetic FYP | Ian Kiarie | JKUAT
+*
+* Uses: INA128 ngspice behavioral model (G=50 fixed)
+* Verifies: Gain = 50 (34 dB) at 100 Hz, -3 dB at ~200 kHz
+* =============================================================
+.TITLE INA128 Gain Simulation
+
+.INCLUDE models/INA128_ngspice.lib
+
+* ---- Supplies ----
+VCC   VCC  0  DC 5
+VREF  VREF 0  DC 2.5
+
+* ---- Differential input: 1 mV AC ----
+VIN  INP  INM  AC 1m
+
+* ---- Input protection ----
+RINP  INP  INA_INP  10K
+RINM  INM  INA_INM  10K
+
+* ---- INA128: IN+  IN-  V+  V-  OUT  REF ----
+XINA  INA_INP  INA_INM  VCC  0  OUT  VREF  INA128
+
+RLOAD  OUT  0  100K
+
+* ---- AC Analysis ----
+.AC DEC 100 1 1MEG
+
+.CONTROL
+  run
+  plot vdb(out) title "INA128 Gain (dB) — target 34 dB at 100 Hz"
+  meas ac gain_100hz FIND vdb(out) AT=100
+  meas ac gain_1khz  FIND vdb(out) AT=1K
+  echo "Gain at 100 Hz (expect ~34 dB = 50x):" $&gain_100hz
+  echo "Gain at 1 kHz (expect ~34 dB):"        $&gain_1khz
+  write sim01_ina128.raw
+.ENDC
+
+.END

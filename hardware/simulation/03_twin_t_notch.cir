@@ -1,0 +1,63 @@
+* =============================================================
+* Simulation 03: Twin-T Notch Filter (50 Hz)
+* Project: sEMG Prosthetic FYP | Ian Kiarie | JKUAT
+* Goal: Verify notch depth > 30 dB at 50 Hz
+*
+* Component values for 50 Hz:
+*   R  = 10kΩ (×2),  R/2 = 5.1kΩ (nearest to 5kΩ, use trimpot for tuning)
+*   C  = 330nF (×2), 2C  = 680nF  (nearest to 318 nF × 2 = 636 nF)
+*   f_notch = 1/(2π×R×C) = 1/(2π×10k×330n) = 48.2 Hz
+*   NOTE: with 330nF (not ideal 318nF), notch is at ~48 Hz; add trimpot to tune to 50 Hz
+*
+* Active twin-T (with positive feedback for deeper notch) uses MCP6002
+* =============================================================
+.TITLE Twin-T Notch Filter 50 Hz
+
+* ---- Models ----
+.INCLUDE models/MCP6002.lib
+
+* ---- Supplies ----
+VCC   VCC  0  DC 5
+VMID  VMID 0  DC 2.5
+
+* ---- Input: 1V AC ----
+VIN  IN  0  AC 1
+
+* ============================
+* Passive Twin-T Network
+*   Top path:    R1, R2 in series + C3 to ground
+*   Bottom path: C1, C2 in series + R3 (=R/2) to ground
+* ============================
+* Top path: R → R → node → C_cross to GND
+R_T1   IN       NT1     10K
+R_T2   NT1      NOTCH   10K
+C_T3   NT1      VMID    680N
+
+* Bottom path: C → C → node → R_cross to GND
+C_T1   IN       NB1     330N
+C_T2   NB1      NOTCH   330N
+R_T3   NB1      VMID    5.1K
+
+* ---- Load into unity-gain buffer (prevents loading the twin-T) ----
+XBUF   NOTCH  NOTCH_OUT  VCC  0  NOTCH_OUT  MCP6002
+
+RLOAD  NOTCH_OUT  0  1MEG
+
+* ---- Analysis ----
+.AC DEC 500 10 1K
+
+.CONTROL
+  run
+  plot vdb(notch_out) title "Twin-T Notch Filter 50 Hz Bode"
+  *
+  * Measure notch depth at 50 Hz
+  meas ac notch_50hz FIND vdb(notch_out) AT=50
+  meas ac gain_100hz FIND vdb(notch_out) AT=100
+  meas ac gain_1khz  FIND vdb(notch_out) AT=1000
+  echo "Notch depth at 50 Hz (target < -30 dB):" $&notch_50hz
+  echo "Passband gain at 100 Hz (should be ~0 dB):" $&gain_100hz
+  echo "Passband gain at 1 kHz (should be ~0 dB):" $&gain_1khz
+  write sim03_notch.raw
+.ENDC
+
+.END

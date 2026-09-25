@@ -44,3 +44,12 @@ tests/subject_data/*/raw/      # Raw ADC CSVs can be huge
 
 # LibreOffice lock files
 .~lock.*
+
+# ngspice output files
+hardware/simulation/*.raw
+
+# Redundant/superseded model files
+hardware/simulation/models/INA128_behavioral.lib
+
+# ML venv (large, not committed)
+ml/venv/

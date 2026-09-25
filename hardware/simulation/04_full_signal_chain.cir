@@ -1,0 +1,106 @@
+* =============================================================
+* Simulation 04: Full sEMG Signal Chain — End-to-End Bode Plot
+* Project: sEMG Prosthetic FYP | Ian Kiarie | JKUAT
+*
+* Chain: INA128 (G=50) → HPF 20Hz → LPF 500Hz → Twin-T Notch → VarGain x6
+* Input: 1 mV differential sEMG (VIN = 1mV AC)
+*
+* All dB measurements are ABSOLUTE (V/V from the 1mV input source).
+* To get relative passband gain, subtract gain at 100 Hz from other measurements.
+* =============================================================
+.TITLE Full sEMG Signal Chain
+
+.INCLUDE models/INA128_ngspice.lib
+.INCLUDE models/MCP6002.lib
+
+VCC   VCC  0  DC 5
+VMID  VMID 0  DC 2.5
+
+VIN   INP  INM  AC 1m
+
+* BLOCK 1: INA128 (G=50)
+RINP  INP  INA_INP  10K
+RINM  INM  INA_INM  10K
+XINA  INA_INP  INA_INM  VCC  0  INA_OUT  VMID  INA128
+
+* BLOCK 2: Sallen-Key HPF 20 Hz
+C_HPF1   INA_OUT   NHPF_A    100N
+C_HPF2   NHPF_A    NHPF_VP   100N
+R_HPF1   NHPF_A    VMID      82K
+R_HPF2   NHPF_OUT  NHPF_VP   82K
+RG_HPF   NHPF_VM   VMID      10K
+RF_HPF   NHPF_OUT  NHPF_VM   5.86K
+XHPF     NHPF_VP   NHPF_VM   VCC  0  NHPF_OUT  MCP6002
+
+* BLOCK 3: Sallen-Key LPF 500 Hz
+R_LPF1   NHPF_OUT  NLPF_A   33K
+R_LPF2   NLPF_A    NLPF_VP  33K
+C_LPF1   NLPF_A    NLPF_OUT 10N
+C_LPF2   NLPF_VP   VMID     10N
+RG_LPF   NLPF_VM  VMID    10K
+RF_LPF   NLPF_OUT NLPF_VM 5.86K
+XLPF     NLPF_VP  NLPF_VM  VCC  0  NLPF_OUT  MCP6002
+
+* BLOCK 4: Twin-T Notch 50 Hz (passive + unity-gain buffer)
+R_T1   NLPF_OUT  NT1       10K
+R_T2   NT1       NOTCH     10K
+C_T3   NT1       VMID      680N
+C_T1   NLPF_OUT  NB1       330N
+C_T2   NB1       NOTCH     330N
+R_T3   NB1       VMID      5.1K
+XBUF   NOTCH  NOTCH_OUT  VCC  0  NOTCH_OUT  MCP6002
+
+* BLOCK 5: Variable gain x6 (non-inverting: 1+50k/10k=6)
+RG_VAR   VGAIN_VM  VMID     10K
+RF_VAR   VGAIN_OUT VGAIN_VM 50K
+XVARGAIN  NOTCH_OUT  VGAIN_VM  VCC  0  VGAIN_OUT  MCP6002
+
+RLOAD  VGAIN_OUT  0  1MEG
+
+.AC DEC 200 1 10K
+
+.CONTROL
+  run
+  * --- Per-stage gains at 100 Hz ---
+  meas ac g_ina    FIND vdb(ina_out)    AT=100
+  meas ac g_hpf    FIND vdb(nhpf_out)   AT=100
+  meas ac g_lpf    FIND vdb(nlpf_out)   AT=100
+  meas ac g_notch  FIND vdb(notch_out)  AT=100
+  meas ac g_total  FIND vdb(vgain_out)  AT=100
+  *
+  * --- Key frequencies ---
+  meas ac g_50hz   FIND vdb(vgain_out)  AT=50
+  meas ac g_20hz   FIND vdb(vgain_out)  AT=20
+  meas ac g_250hz  FIND vdb(vgain_out)  AT=250
+  meas ac g_500hz  FIND vdb(vgain_out)  AT=500
+  *
+  * --- -3 dB points relative to passband ---
+  let threshold = g_total - 3
+  meas ac f_low_3db   WHEN vdb(vgain_out)=threshold RISE=1
+  meas ac f_high_3db  WHEN vdb(vgain_out)=threshold FALL=1
+  *
+  echo "=== Full Signal Chain Simulation Results ==="
+  echo "Per-stage gain at 100 Hz (absolute dBV, input=1mV):"
+  echo "  After INA128 (target +34 dB rel. input):" $&g_ina
+  echo "  After HPF:"    $&g_hpf
+  echo "  After LPF:"    $&g_lpf
+  echo "  After Notch:"  $&g_notch
+  echo "  After VarGain x6:" $&g_total
+  echo ""
+  echo "Frequency response (output):"
+  echo "  At 20 Hz  (near lower edge):" $&g_20hz
+  echo "  At 50 Hz  (NOTCH — expect deep dip):" $&g_50hz
+  echo "  At 100 Hz (passband):" $&g_total
+  echo "  At 250 Hz (passband):" $&g_250hz
+  echo "  At 500 Hz (near upper edge):" $&g_500hz
+  echo ""
+  echo "  Lower -3 dB point (target 20 Hz):" $&f_low_3db
+  echo "  Upper -3 dB point (target 500 Hz):" $&f_high_3db
+  echo ""
+  echo "Notch depth relative to 100 Hz passband:"
+  let notch_rel = g_50hz - g_total
+  echo "  Notch at 50 Hz (target < -30 dB):" $&notch_rel
+  write sim04_full_chain.raw
+.ENDC
+
+.END
