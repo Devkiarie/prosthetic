@@ -1,43 +1,54 @@
 # ML Step: NinaPro DB5 Exploration
 
-**Status:** In progress -- download running (2026-09-25)
+**Status:** COMPLETE -- data verified 2026-09-25
 **Notebook:** `ml/notebooks/01_data_exploration.ipynb`
+**Script:** `ml/scripts/explore_ninapro.py`
 **Kernel:** FYP sEMG ML (Python 3.11)
 
-## Dataset Facts
-- 10 subjects, 52 gestures + rest, Exercise 1-3
-- 2x Myo Armband = 16 channels @ 200 Hz, 6 reps per gesture
-- Direct download (no login): `https://ninapro.hevs.ch/files/DB5_Preproc/sN.zip`
-- ~19 MB per subject, ~190 MB total
-- Extracting to: `ml/data/ninapro_db5/S{N}/`
+## Dataset Facts (confirmed from real data)
+- 10 subjects, Exercise 1-3 downloaded, 30 .mat files total
+- Path pattern: `ml/data/ninapro_db5/S{N}/s{N}/S{N}_E1_A1.mat`
+- EMG: 8-bit signed integers [-128, 127] (Myo armband quantisation, not raw mV)
+- Subject 1: 130,267 samples = 651 s @ 200 Hz
+- 4 selected channels: indices [0, 4, 8, 12]
 
-## Channel Selection
-Using 4 of 16 channels: indices [0, 4, 8, 12] -- evenly spaced around forearm from first Myo
-
-## Gesture Mapping (DB5 label -> our class)
-| DB5 | Gesture | Our class |
-|---|---|---|
-| 0 | Rest | 0 |
-| 3 | Fist | 2 (Power grasp) |
-| 4 | Thumb up | 7 |
-| 5 | Wrist flexion | 5 |
-| 6 | Wrist extension | 6 |
-| 11 | Pinch | 3 |
-| 12 | Hand open | 1 |
-| 1 | Index extension | 4 (Point) |
+## Gesture Mapping (DB5 label -> our class) -- all 8 confirmed present
+| DB5 | Gesture | Our class | Windows (S1) |
+|---|---|---|---|
+| 0 | Rest | 0 | 8204 |
+| 1 | Index extension | 4 (Point) | 505 |
+| 3 | Fist | 2 (Power grasp) | 437 |
+| 4 | Thumb up | 7 | 424 |
+| 5 | Wrist flexion | 5 | 416 |
+| 6 | Wrist extension | 6 | 443 |
+| 11 | Pinch | 3 | 394 |
+| 12 | Hand open | 1 | 382 |
 
 ## Window Parameters (DB5 rate, 200 Hz)
-- Window: 50 samples = 250 ms
+- Window: 50 samples = 250 ms at 200 Hz
 - Step: 10 samples = 50 ms (80% overlap)
-- NOTE: Hardware uses 500 samples at 2000 Hz -- same 250 ms window, different sample count
+- Features per window: 24 (6 per channel x 4 channels)
+- Subject 1 total windows: 11,205
 
-## Status
-- [ ] Download complete (all 10 subjects)
-- [ ] Load subject 1, verify shape (N, 16)
-- [ ] Select 4 channels, remap labels
-- [ ] Visualise 1 gesture per channel (time-domain plot)
-- [ ] Windowed feature extraction on all subjects
-- [ ] Save processed `X_features.npy`, `y_labels.npy`
+## Feature Extraction (Subject 1)
+- Feature matrix shape: (11,205 x 24)
+- All 8 classes present
+- Class imbalance: Rest >> other gestures (~73% Rest)
+  - MITIGATION: undersample Rest to match gesture class counts before training
+
+## Outputs
+- `ml/data/processed/S1_X_features.npy`  shape (11205, 24)
+- `ml/data/processed/S1_y_labels.npy`    shape (11205,)
+- `ml/data/processed/real_semg_session.png`  -- 60 s overview
+- `ml/data/processed/gesture_grid.png`  -- 1 rep per gesture
+
+## Next Steps
+- [ ] Run explore_ninapro.py for all 10 subjects
+- [ ] Combine into full X (all subjects), y dataset
+- [ ] Undersample/balance Rest class
+- [ ] Train/test split: subjects 9+10 as held-out test set
+- [ ] Baseline SVM classifier (quick validation)
+- [ ] Proceed to CNN training (notebook 04)
 
 ## Last Updated
-2026-09-25 -- notebook scaffolded, download in progress
+2026-09-25 -- Subject 1 fully explored, pipeline verified
