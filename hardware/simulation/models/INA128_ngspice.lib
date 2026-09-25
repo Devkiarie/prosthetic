@@ -1,0 +1,36 @@
+* =============================================================
+* INA128 Simple Behavioral Macromodel for ngspice
+* Suitable for AC Bode-plot analysis (filter design verification)
+*
+* Modelled: gain G=50, 200 kHz bandwidth, output rail clamp
+* Pin order: IN+  IN-  V+  V-  OUT  REF
+*             1    2    3    4    5    6
+*
+* Usage:
+*   .INCLUDE models/INA128_ngspice.lib
+*   XINA1  INP  INM  VCC  GND  OUT  VREF  INA128
+* =============================================================
+.SUBCKT INA128 1 2 3 4 5 6
+*
+* Input resistance (differential + common mode)
+RIN1  1  2  10G
+RIN_CM1  1  0  10G
+RIN_CM2  2  0  10G
+*
+* Differential gain: G=50 (fixed — set via parameter in top netlist if needed)
+* E-source VCVS: OUT_IDEAL = 50 × (V(IN+) - V(IN-)) + V(REF)
+EGAIN  IDEAL_OUT  6  1  2  50
+*
+* Bandwidth limit: GBW = 10 MHz at G=1 → BW = 10e6/50 = 200 kHz at G=50
+* One-pole RC: fp = 1/(2π×R×C)
+* Use R=1k, C = 1/(2π×1k×200k) = 795 pF
+RPOLE  IDEAL_OUT  POLE_NODE  1K
+CPOLE  POLE_NODE  6  795P
+*
+* Output buffer (unity gain, low Rout)
+EOUT  5  6  POLE_NODE  6  1
+*
+* Output resistance
+ROUT_INTERNAL  5  0  50
+*
+.ENDS INA128

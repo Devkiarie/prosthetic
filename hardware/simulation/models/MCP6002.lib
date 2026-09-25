@@ -1,0 +1,35 @@
+* =============================================================
+* MCP6002 Op-Amp Behavioral Macromodel for ngspice
+* Based on Microchip MCP6002 Datasheet DS21801E
+*
+* Pins: 1=IN+  2=IN-  3=V+  4=V-  5=OUT
+* All DC/AC/transient simulations. Good for filter design verification.
+*
+* Specs modelled:
+*   OL gain:  100 dB (100,000 V/V)
+*   GBW:      1 MHz  (dominant pole at ~10 Hz)
+*   Rin_diff: 1 GΩ
+*   Rout:     100 Ω
+*   (No slew rate, no noise, no supply clamp — sufficient for filter Bode work)
+* =============================================================
+.SUBCKT MCP6002 1 2 3 4 5
+
+* Input differential resistance
+RINDIFF  1  2  1G
+
+* Open-loop gain stage (100 dB = 100,000 V/V)
+EGAIN  VGAIN  0  1  2  100000
+
+* Dominant pole: fp = 10 Hz
+* fp = 1/(2π × R × C)  → R=10k, C=1.59µF → fp = 10.0 Hz
+* GBW = 100,000 × 10 Hz = 1 MHz ✓
+RPOLE  VGAIN  VPOLE  10K
+CPOLE  VPOLE  0  1.59U
+
+* Unity-gain output buffer
+EOUT  VBUF  0  VPOLE  0  1
+
+* Output resistance: 100 Ω (MCP6002 typical)
+ROUT  VBUF  5  100
+
+.ENDS MCP6002

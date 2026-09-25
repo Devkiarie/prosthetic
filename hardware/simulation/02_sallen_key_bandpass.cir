@@ -1,0 +1,66 @@
+* =============================================================
+* Simulation 02: Sallen-Key Bandpass Filter (20 Hz HPF + 500 Hz LPF)
+* Project: sEMG Prosthetic FYP | Ian Kiarie | JKUAT
+* =============================================================
+.TITLE Sallen-Key Bandpass Filter 20-500 Hz
+
+.INCLUDE models/MCP6002.lib
+
+VCC   VCC  0  DC 5
+VMID  VMID 0  DC 2.5
+VIN   IN   0  AC 1
+
+* ==============================
+* Sallen-Key HPF 20 Hz
+* Equal-component: R=82k, C=100nF, fc=19.4 Hz
+* Butterworth K=1.586: Rg=10k, Rf=5.86k
+* Topology: C series, R shunt + R positive feedback
+* ==============================
+C_HPF1   IN       NHPF_A   100N
+C_HPF2   NHPF_A   NHPF_VP  100N
+R_HPF1   NHPF_A   VMID     82K
+R_HPF2   NHPF_OUT NHPF_VP  82K
+RG_HPF   NHPF_VM  VMID     10K
+RF_HPF   NHPF_OUT NHPF_VM  5.86K
+XHPF     NHPF_VP  NHPF_VM  VCC  0  NHPF_OUT  MCP6002
+
+* ==============================
+* Sallen-Key LPF 500 Hz
+* Equal-component: R=33k, C=10nF, fc=482 Hz
+* Butterworth K=1.586: Rg=10k, Rf=5.86k
+* Topology: R series, C feedback + C shunt
+* ==============================
+R_LPF1   NHPF_OUT  NLPF_A   33K
+R_LPF2   NLPF_A    NLPF_VP  33K
+C_LPF1   NLPF_A    NLPF_OUT 10N
+C_LPF2   NLPF_VP   VMID     10N
+RG_LPF   NLPF_VM  VMID    10K
+RF_LPF   NLPF_OUT NLPF_VM 5.86K
+XLPF     NLPF_VP  NLPF_VM  VCC  0  NLPF_OUT  MCP6002
+
+RLOAD  NLPF_OUT  0  1MEG
+
+.AC DEC 200 1 10K
+
+.CONTROL
+  run
+  * Passband gain at 100 Hz and 250 Hz
+  meas ac gain_100hz FIND vdb(nlpf_out) AT=100
+  meas ac gain_250hz FIND vdb(nlpf_out) AT=250
+  * -3 dB from passband: find crossing relative to passband peak
+  * HPF: find lower -3 dB (gain dropping 3 dB from passband, on rising edge)
+  let threshold = gain_100hz - 3
+  meas ac f_low_3db  WHEN vdb(nlpf_out)=threshold RISE=1
+  meas ac f_high_3db WHEN vdb(nlpf_out)=threshold FALL=1
+  * Also check gain at 50 Hz (will see notch effect when combined with notch sim)
+  meas ac gain_50hz FIND vdb(nlpf_out) AT=50
+  echo "--- Sallen-Key Bandpass Results ---"
+  echo "Passband gain at 100 Hz (dB):" $&gain_100hz
+  echo "Passband gain at 250 Hz (dB):" $&gain_250hz
+  echo "Lower -3 dB from passband (target ~20 Hz):"  $&f_low_3db
+  echo "Upper -3 dB from passband (target ~500 Hz):" $&f_high_3db
+  echo "Gain at 50 Hz (in-band, will be notched later):" $&gain_50hz
+  write sim02_bandpass.raw
+.ENDC
+
+.END
