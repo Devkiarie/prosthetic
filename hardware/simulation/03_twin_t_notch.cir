@@ -47,6 +47,7 @@ RLOAD  NOTCH_OUT  0  1MEG
 .AC DEC 500 10 1K
 
 .CONTROL
+  set filetype=ascii
   run
   plot vdb(notch_out) title "Twin-T Notch Filter 50 Hz Bode"
   *

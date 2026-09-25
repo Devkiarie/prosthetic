@@ -60,6 +60,7 @@ RLOAD  VGAIN_OUT  0  1MEG
 .AC DEC 200 1 10K
 
 .CONTROL
+  set filetype=ascii
   run
   * --- Per-stage gains at 100 Hz ---
   meas ac g_ina    FIND vdb(ina_out)    AT=100
