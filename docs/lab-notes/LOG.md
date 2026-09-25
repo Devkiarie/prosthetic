@@ -464,3 +464,30 @@ Ada Right v1.1.blend was created in Blender 2.7x — Blender 5.2 (snap) crashed 
 File → Import → STL → select any extracted STL
 Then import multiple: 5th_Palm.stl + all finger STLs for full hand view
 
+
+## Session 20 — 2026-09-25 Hand Rigging + Animation
+**Commits:** 7183c5d (submodule), see parent below
+
+### Achieved
+- Opened Ada_Right_v2_full.blend in Blender 5.2 — full hand visible (palm + 5 fingers + dorsal cover)
+- Added HandRig armature (5 bones: thumb, index, middle, ring, pinky)
+- Parented all 5 finger meshes to their respective bones (BONE parenting, keep transform)
+- Keyframed open→fist→open animation: frame1=open, frame30=fist(80°), frame60=open
+- Verified: pressing Space in Blender plays the curl animation — fingers move correctly
+- Saved as Ada_Right_v4_animated.blend
+
+### Blender files lineage
+- Ada Right v1.1.blend (original, Blender 2.7x — crashes Blender 5.2)
+- Ada_Right_v2_full.blend (all parts assembled, Blender 5.2 format)
+- Ada_Right_v3_rigged.blend (armature added, no parenting yet)
+- Ada_Right_v4_animated.blend (FINAL: parented + animated, use this one)
+
+### Next steps for hand
+1. Add SG90 servo pocket booleans to 5th_Palm.stl
+2. Add 2mm tendon channel booleans through finger phalanges
+3. Export final printable STLs and slice in Cura
+
+### Tools confirmed working
+- Blender 5.2.2 (snap) — STL import + rigging + animation ✓
+- OpenSCAD 2021.01 (apt) — available for parametric mods
+- MeshLab — removed (GL driver issue)
