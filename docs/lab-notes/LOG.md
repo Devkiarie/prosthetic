@@ -276,3 +276,15 @@ Downgraded in `gradle/libs.versions.toml`:
 These are the same versions as the working coffee-operations app.
 **Next:** Re-sync Gradle in Android Studio (File → Sync Project with Gradle Files)
 
+
+## Session 10 — 2026-09-25 Build Errors Fixed
+**Time:** 2026-09-25 19:32
+
+### Error 1: checkDebugAarMetadata FAILED
+AGP 8.7.3 only tested up to compileSdk=35. We had compileSdk=36.
+Fix: `compileSdk = 36 → 35`, `targetSdk = 36 → 35` in app/build.gradle.kts
+
+### Error 2: Gradle GC thrashing (512MB heap)
+Fix: Created gradle.properties with `org.gradle.jvmargs=-Xmx2048m`
+Also enabled caching + parallel builds.
+

@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.ian.myocontrol"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.ian.myocontrol"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
