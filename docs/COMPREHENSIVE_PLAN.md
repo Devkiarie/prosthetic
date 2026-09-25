@@ -27,7 +27,7 @@ No step depends on hardware you do not yet have unless marked.
      - SO2: Implement real-time DSP pipeline on ESP32-S3
      - SO3: Train, quantize, deploy 1D-CNN on TFLite Micro
      - SO4: Implement BLE calibration protocol (<3 min)
-     - SO5: Integrate with 2-DOF gripper and validate with 5 subjects
+     - SO5: Integrate with 5-finger tendon-driven prosthetic hand and validate with 5 subjects
   5. Write Section 5: Related Studies (~3 pages)
      - Verify ALL DOIs by web-searching title+authors before including
      - Cover: Salgado 2025, Mekruksavanich 2026, Lee 2025, Molinari 2026, Furtado 2026, Prakash 2026
@@ -339,16 +339,20 @@ No step depends on hardware you do not yet have unless marked.
   5. Implement control commands (start/stop calibration)
 - **Pass:** Pairing < 5s, update rate > 10Hz, packet loss < 1%
 
-### E4. Actuator Integration
+### E4. Actuator Integration — 5-Finger Tendon-Driven Hand
 - **Steps:**
-  1. Wire PCA9685 to ESP32 via I2C
-  2. Wire 2x MG996R servos to PCA9685
-  3. Test all 8 gesture positions via serial commands
-  4. Measure servo response time
-  5. 3D print gripper, attach to servos
-  6. Grip force test (500g object)
-  7. Endurance test (200 cycles)
-- **Pass:** Response < 200ms, holds 500g, survives 200 cycles
+  1. Wire PCA9685 to ESP32 via I2C (SCL GPIO9, SDA GPIO8)
+  2. Wire 5× SG90 (channels 0–4, fingers) + 1× MG996R (channel 5, wrist) to PCA9685
+  3. Calibrate each servo: find 0° (open) and 120–130° (closed) PWM values
+  4. Test all 8 gesture postures via serial commands (servo angle table)
+  5. 3D print palm body + 15 phalanges (PETG, 0.2mm, 30% infill)
+  6. Assemble M2 pivot pins, route nylon tendons, attach elastic return cords
+  7. Install SG90s into dorsal palm pockets, run cables to PCA9685
+  8. Test each finger individually (independent open/close)
+  9. Grip force test (300g object, POWER GRASP posture)
+  10. Point gesture test (index only extends, others closed)
+  11. Endurance test (200 gesture cycles without tendon slip)
+- **Pass:** Response < 200ms, all 8 postures visually distinct, index isolates correctly, holds 300g, 200 cycles
 
 ### E5. Decision Logic Layer
 - **Steps:**

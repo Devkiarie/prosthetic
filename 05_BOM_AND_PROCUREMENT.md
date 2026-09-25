@@ -64,9 +64,12 @@ Note: The concept paper claims "sub-USD 20 component cost." At volume (100+ unit
 | | **--- Digital ---** | | | | | |
 | 28 | ESP32-S3-DevKitC-1 | Dev board (USB-C) | 1 | 1,500 | 1,500 | AliExpress / local |
 | 29 | PCA9685 breakout board | 16-ch PWM (I2C) | 1 | 250 | 250 | AliExpress / local |
-| | **--- Actuator ---** | | | | | |
-| 30 | MG996R servo | High torque, 180° | 2 | 350 | 700 | Local / AliExpress |
-| 31 | Servo extension cables | 30 cm | 2 | 30 | 60 | |
+| | **--- Actuator (5-finger hand) ---** | | | | | |
+|| 30 | SG90 micro servo | 9g, 1.8 kg·cm, 180° — finger actuation | 5 | 120 | 600 | Local / AliExpress |
+|| 30b | MG996R servo | 11 kg·cm, 180° — wrist rotation | 1 | 350 | 350 | Local / AliExpress |
+|| 31 | Servo extension cables | 30 cm, 6× | 6 | 30 | 180 | |
+|| 31b | Nylon fishing line 0.4mm | Finger pull tendons | 5m | 50 | 50 | Local |
+|| 31c | Elastic cord 1mm | Dorsal finger return | 2m | 30 | 30 | Local |
 | | **--- Electrodes ---** | | | | | |
 | 32 | Ag/AgCl disposable electrodes | ECG/EMG grade, snap type | 50 | 12 | 600 | Medical supply |
 | 33 | Electrode snap cables | 2-conductor shielded | 4 | 80 | 320 | Medical supply / DIY |
@@ -78,7 +81,7 @@ Note: The concept paper claims "sub-USD 20 component cost." At volume (100+ unit
 | 37 | 4-layer PCB (JLCPCB, 5 pcs) | 80×60mm, black | 5 | 160 | 800 | JLCPCB |
 | 38 | DHL shipping to Kenya | | 1 | 1,200 | 1,200 | JLCPCB |
 | | **--- Mechanical ---** | | | | | |
-| 39 | PETG filament (250g) | 3D printer, 1.75mm | 1 | 500 | 500 | Local / online |
+|| 39 | PETG filament (350g) | 3D printer, 1.75mm — hand + fingers | 1 | 700 | 700 | Local / online |
 | 40 | M3 hardware kit | Screws, nuts, standoffs | 1 | 150 | 150 | |
 | | **--- Prototyping ---** | | | | | |
 | 41 | Breadboard (full size) | For Phase 1 testing | 2 | 150 | 300 | Local |
@@ -89,7 +92,7 @@ Note: The concept paper claims "sub-USD 20 component cost." At volume (100+ unit
 | | | | | | | |
 | | **TIER B TOTAL** | | | | **~KES 10,870** | **~USD 84** |
 
-**Note:** This exceeds the KES 8,500 target by ~KES 2,370. The overage is prototyping consumables (breadboards, jumper wires, solder, spare components). The actual device BOM (items 1–36) totals ~KES 7,870 — within budget.
+**Note:** Actuator upgraded from 2-DOF gripper (2× MG996R) to 5-finger tendon-driven hand (5× SG90 + 1× MG996R). BOM delta: ~KES 650 (~USD 5). This exceeds the KES 8,500 target by ~KES 3,020. The overage is prototyping consumables (breadboards, jumper wires, solder, spare components). The actual device BOM (items 1–39) totals ~KES 8,520 — effectively within budget. Servo count increase (2→6) is handled by existing PCA9685 (16 channels).
 
 ---
 
