@@ -45,14 +45,29 @@ fun HomeScreen(
 
     // BLE device picker — visible during scanning
     val scannedDevices by viewModel.scannedDevices.collectAsStateWithLifecycle()
-    val showPicker = isScanning || scannedDevices.isNotEmpty()
+    // Use a local flag so dismiss is always decisive — not re-driven by stale state
+    var showPicker by remember { mutableStateOf(false) }
+
+    // Open picker when scan starts; close it when connection completes or cancelled
+    LaunchedEffect(isScanning, isConnected) {
+        when {
+            isScanning   -> showPicker = true
+            isConnected  -> showPicker = false  // connected — picker no longer needed
+        }
+    }
 
     if (showPicker) {
         BleDevicePicker(
             devices      = scannedDevices,
             isScanning   = isScanning,
-            onDismiss    = { viewModel.onConnectClick() }, // cancel/stop scan
-            onDevicePick = { device -> viewModel.onDeviceSelected(device) }
+            onDismiss    = {
+                viewModel.cancelScan()
+                showPicker = false
+            },
+            onDevicePick = { device ->
+                showPicker = false
+                viewModel.onDeviceSelected(device)
+            }
         )
     }
 
@@ -192,7 +207,7 @@ fun HomeScreen(
                         Text(
                             text  = when {
                                 isConnected -> "Disconnect"
-                                isScanning  -> "Scanning..."
+                                isScanning  -> "Stop"
                                 else        -> "Connect"
                             },
                             style = MaterialTheme.typography.labelMedium

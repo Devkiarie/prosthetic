@@ -147,6 +147,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun cancelScan() {
+        bleManager.stopScan()          // clears scannedDevices + sets Disconnected
+    }
+
     fun onDeviceSelected(device: BleDeviceInfo) {
         bleManager.connectToDevice(device)
     }

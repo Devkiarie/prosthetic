@@ -35,7 +35,7 @@ fun BleDevicePicker(
     onDevicePick: (BleDeviceInfo) -> Unit
 ) {
     ModalBottomSheet(
-        onDismissRequest = onDismiss,
+        onDismissRequest = onDismiss,  // swipe-down and X both call onDismiss
         sheetState       = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor   = MaterialTheme.colorScheme.surface,
         shape            = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
