@@ -300,3 +300,101 @@ Files created:
 - mipmap-anydpi-v26: ic_launcher.xml, ic_launcher_round.xml (adaptive icon XML)
 - values/ic_launcher_background.xml (#0A0F1E dark background)
 
+
+## Session 12 — 2026-09-25 Theme Rework: Cream Default + FM Absolute Black Dark
+**Time:** $(date +"%Y-%m-%d %H:%M")
+**Commit:** f9871a7
+
+### Changes
+- McColors.kt: added semantic aliases (Accent, TextPrimary, Background, Border, SurfaceVariant) + HeroCardStart/HeroCardEnd warm peach gradient + DecorPeach/Beige/Sage blob colours
+- GestureDisplay.kt: replaced plain white card with warm peach gradient hero card (`#FFF5F2` → `#FAD5C8`), decorative coral circle backdrop, pill confidence bar. No more cyan border.
+- HomeScreen.kt: 4 soft decorative circles in background (bottom area, low opacity pastels), MYOCONTROL title now charcoal (not cyan), connect button is OutlinedButton pill, emergency stop is pill-shaped
+- McComponents.kt: McCard + McStatCard use MaterialTheme.colorScheme for auto light/dark
+- AppNavHost.kt: Scaffold + NavigationBar use MaterialTheme.colorScheme.background — cream in light, absolute black in dark mode
+
+### Design System
+- Light (default): cream `#F9F6F2` bg, white `#FFFFFF` cards, coral `#F07860` accent, charcoal `#1A1A1A` text
+- Dark (optional): absolute black `#080808` bg, `#111111` cards, coral accent, white text
+- Hero card: peach gradient with decorative circle, matches reference UI exactly
+- Nav bar: coral active, gray inactive, no pill indicator, no tonal elevation
+
+## Session 13 — 2026-09-25 BLE Fix + Settings Screen
+**Commit:** 3eb95a6
+
+### Changes
+**BLE SecurityException fix:**
+- AndroidManifest: added legacy BLUETOOTH + BLUETOOTH_ADMIN permissions (maxSdkVersion=30) so API <31 devices don't crash on `getBluetoothLeScanner()`
+- BlePermission.kt: new `rememberBlePermissionRequest()` composable — requests BLUETOOTH_SCAN + BLUETOOTH_CONNECT + ACCESS_FINE_LOCATION at runtime before calling BleManager.startScan()
+- HomeScreen: connect button now calls permission launcher first; only calls ViewModel after all permissions granted; disconnect skips permission check
+
+**Settings Screen:**
+- SettingsScreen.kt: Light / Dark / System theme option cards with mini theme previews
+- Selected card has coral border + checkmark icon
+- About section shows app name, purpose, device, project info
+- Gear icon on HomeScreen is now a proper `IconButton` wired to navigate to settings
+- AppNavHost accepts appTheme + onSetTheme params; hides bottom nav on settings
+- MainActivity holds AppTheme state (default: LIGHT) and passes to AppNavHost
+
+## Session 14 — 2026-09-25 Canvas Illustrations + BLE Device Picker
+**Commit:** 2a29634
+
+### GestureIllustration.kt (new file)
+Pure Compose Canvas drawing of a human hand — no image assets needed.
+- Palm body, 4 fingers, thumb — each drawn as a rotated/scaled rounded rect
+- 8 unique poses via `AnimationSpec` per `GestureLabel`: REST, OPEN_HAND, POWER_GRASP, PINCH, POINT, WRIST_FLEX, WRIST_EXT, THUMBS_UP
+- Finger curl (0=open, 1=fist) animates with 500ms FastOutSlowIn tween between gestures
+- Wrist angle animates ±30° for FLEX/EXT
+- Coral accent dot on PINCH/POINT/THUMBS_UP fingertip
+- Warm skin tone (#F5C4B0 = McColors.DecorPeach), peach circle backdrop
+
+### GestureDisplay.kt — card redesigned
+- Left column: 130dp GestureIllustration (replaces monospace text symbol)
+- Right column: gesture name, large bold confidence %, confidence bar, latency
+- Matches reference layout: illustration left, stats right
+
+### BleDevicePicker.kt (new file)
+ModalBottomSheet shown immediately when scan starts:
+- Scanning state: spinner + message
+- Devices found: list rows with device name, MAC address, RSSI signal colour (green/amber/red)
+- X button cancels / stops scan
+- Tap any device row to connect
+
+### BleManager.kt
+- Removed auto-connect (was connecting to first device found, no user choice)
+- Added `scannedDevices: StateFlow<List<BleDeviceInfo>>` — accumulates scan results
+- Added `connectToDevice(BleDeviceInfo)` — called from picker
+- Broad scan (no service UUID filter) so all BLE devices visible during dev
+
+## Session 15 — 2026-09-25 BLE Picker Dismiss Fix
+**Commit:** 4fca279
+
+### Bug: X button didn't close picker + navigation blocked
+**Root cause 1:** `onDismiss` called `onConnectClick()` which stopped the scan but `scannedDevices` remained non-empty. `showPicker = isScanning || devices.isNotEmpty()` stayed true — sheet never left composition.
+
+**Root cause 2:** `ModalBottomSheet` was rendered outside the main `Box`, so its full-screen scrim overlay stayed in the tree even after swipe-dismiss, eating all touch events from the `NavHost`.
+
+**Fixes applied:**
+- `HomeScreen`: `showPicker` changed from reactive expression to `mutableStateOf(false)` controlled by `LaunchedEffect(isScanning, isConnected)` — setting it false removes the composable from the tree entirely
+- X button + swipe: `onDismiss = { viewModel.cancelScan(); showPicker = false }`
+- Device tap: `showPicker = false` before `connectToDevice()` — no orphaned sheet
+- `BleManager.stopScan()`: now also clears `_scannedDevices = emptyList()`
+- `HomeViewModel.cancelScan()`: new dedicated function that calls `bleManager.stopScan()`
+- Connect button: "Scanning..." → "Stop" when scanning (second cancel path)
+
+
+## Session 16 — 2026-09-25 Actuator Decision: 5-Finger Hand
+**No code commit — docs only**
+
+### Decision
+Upgraded actuator from 2-DOF gripper (2× MG996R) to 5-finger tendon-driven prosthetic hand.
+**Rationale:** Same sEMG pipeline — classifier outputs a posture label, firmware looks up 5 servo angles.
+BOM delta: ~KES 650 (~USD 5). Still under USD 20 BOM. PCA9685 already in BOM and handles 16 channels.
+
+### Files Updated
+- `modules/actuator-gripper.md` — full rewrite: motor placement, tendon mechanism, gesture-servo table, print specs, assembly order, PCA9685 channel map
+- `05_BOM_AND_PROCUREMENT.md` — 2× MG996R → 5× SG90 + 1× MG996R + nylon/elastic; filament 250g→350g
+- `docs/COMPREHENSIVE_PLAN.md` — SO5 and E4 block updated to 5-finger hand + 11-step assembly
+- Wiki entity `fyp-semg-prosthetic.md` — actuation, end-demo, system architecture all updated
+
+### Design Tool Guidance Written
+See below in response — Tinkercad / Fusion 360 / Blender + Bambu/Creality printer workflow.
