@@ -24,12 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ian.myocontrol.core.ble.rememberBlePermissionRequest
 import com.ian.myocontrol.core.designsystem.*
 import com.ian.myocontrol.core.theme.McColors
 import com.ian.myocontrol.domain.model.BleConnectionState
 
 @Composable
 fun HomeScreen(
+    onOpenSettings: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState    by viewModel.uiState.collectAsStateWithLifecycle()
@@ -38,6 +40,9 @@ fun HomeScreen(
     val isConnected = uiState.connectionState is BleConnectionState.Connected
     val isScanning  = uiState.connectionState is BleConnectionState.Scanning ||
                       uiState.connectionState is BleConnectionState.Connecting
+
+    // Runtime BLE permissions — request on Connect press, call ViewModel only when granted
+    val requestBlePermissions = rememberBlePermissionRequest { viewModel.onConnectClick() }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -106,11 +111,13 @@ fun HomeScreen(
                         )
                     }
                 }
-                Icon(
-                    imageVector    = Icons.Filled.Settings,
-                    contentDescription = "Settings",
-                    tint           = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                IconButton(onClick = onOpenSettings) {
+                    Icon(
+                        imageVector        = Icons.Filled.Settings,
+                        contentDescription = "Settings",
+                        tint               = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(18.dp))
@@ -152,7 +159,10 @@ fun HomeScreen(
 
                     // Connect / Disconnect button
                     OutlinedButton(
-                        onClick = { viewModel.onConnectClick() },
+                        onClick = {
+                            if (isConnected) viewModel.onConnectClick()
+                            else requestBlePermissions()
+                        },
                         shape  = RoundedCornerShape(50),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = if (isConnected) MaterialTheme.colorScheme.onSurfaceVariant
