@@ -288,3 +288,15 @@ Fix: `compileSdk = 36 → 35`, `targetSdk = 36 → 35` in app/build.gradle.kts
 Fix: Created gradle.properties with `org.gradle.jvmargs=-Xmx2048m`
 Also enabled caching + parallel builds.
 
+
+## Session 11 — 2026-09-25 Launcher icon assets added
+**Time:** 2026-09-25 19:37
+
+### Error: mipmap/ic_launcher not found (AAPT)
+Scaffold never created the res/mipmap-* folders.
+Fix: generated solid-cyan (#00E5FF) placeholder PNGs via stdlib Python.
+Files created:
+- mipmap-mdpi/hdpi/xhdpi/xxhdpi/xxxhdpi: ic_launcher.png, ic_launcher_round.png, ic_launcher_foreground.png
+- mipmap-anydpi-v26: ic_launcher.xml, ic_launcher_round.xml (adaptive icon XML)
+- values/ic_launcher_background.xml (#0A0F1E dark background)
+
