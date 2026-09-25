@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ian.myocontrol.core.ble.BleManager
 import com.ian.myocontrol.domain.model.BleConnectionState
+import com.ian.myocontrol.domain.model.BleDeviceInfo
 import com.ian.myocontrol.domain.model.GestureLabel
 import com.ian.myocontrol.domain.model.GestureResult
 import com.ian.myocontrol.domain.model.SignalMetrics
@@ -31,6 +32,9 @@ class HomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    /** Devices found during scan — directly exposed from BleManager */
+    val scannedDevices = bleManager.scannedDevices
 
     private var fakeEmitterJob: Job? = null
     private var gestureCount = 0
@@ -137,9 +141,14 @@ class HomeViewModel @Inject constructor(
     fun onConnectClick() {
         when (_uiState.value.connectionState) {
             is BleConnectionState.Disconnected -> bleManager.startScan()
+            is BleConnectionState.Scanning     -> bleManager.stopScan()
             is BleConnectionState.Connected    -> bleManager.disconnect()
             else -> Unit
         }
+    }
+
+    fun onDeviceSelected(device: BleDeviceInfo) {
+        bleManager.connectToDevice(device)
     }
 
     fun onEmergencyStop() {
