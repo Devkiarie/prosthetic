@@ -1,0 +1,3 @@
+[submodule "hardware/hand_stl/Ada_3D_model_files"]
+	path = hardware/hand_stl/Ada_3D_model_files
+	url = https://github.com/Open-Bionics/Ada_3D_model_files.git
