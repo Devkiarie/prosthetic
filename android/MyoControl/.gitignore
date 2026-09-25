@@ -1,0 +1,25 @@
+# Android build outputs
+.gradle/
+build/
+app/build/
+*/build/
+
+# Local configuration files
+local.properties
+*.iml
+.idea/
+*.iws
+*.ipr
+.DS_Store
+
+# Keystore files - NEVER commit these
+*.jks
+*.keystore
+release-keystore.properties
+
+# Generated files
+app/src/main/assets/
+
+# Gradle
+gradle-wrapper.jar is committed intentionally
+!gradle/wrapper/gradle-wrapper.jar
