@@ -204,3 +204,75 @@ Each entry: Date | Session # | What was done | Measurements (actual, not targets
 **Next session (Android):** Set up Android project (Kotlin + Compose, Hilt, Room, Navigation). Build Home screen + BLE scan. Use fake classifier.
 
 ---
+
+## [2026-09-25] Session 7 | Android App Scaffold (Phase 1)
+
+**Done:**
+- Scaffolded MyoControl Android project at `android/MyoControl/`
+- Kotlin 2.2.0 + Jetpack Compose BOM 2025.01.01 + Hilt 2.52 + Room 2.6.1 + Navigation 2.8.5
+- AGP 8.7.3, Gradle 9.4.1, compileSdk=36, minSdk=26 (Android 8.0)
+- Core structure:
+  - `core/ble/BleManager.kt` -- scan, connect, MTU negotiation, notification decode
+  - `core/ble/MyoGatt.kt` -- 5 GATT UUID constants matching MYOCONTROL_DESIGN.md
+  - `core/theme/` -- McColors (dark clinical palette), MyoControlTheme
+  - `domain/model/BleModels.kt` -- BleConnectionState, GestureResult, SignalMetrics, GestureLabel
+  - `data/local/` -- MyoDatabase, GestureSessionEntity
+  - `di/AppModule.kt` -- Hilt Room provider
+  - `presentation/navigation/` -- 4-tab bottom nav (Home, Train, Monitor, Analytics)
+  - 4 screen stubs (placeholders)
+- 29 files, 1,353 lines, commit dea523c
+- Pushed to github.com:Devkiarie/prosthetic.git main
+
+**Next (Phase 2):** Build fake classifier in HomeViewModel -- emit random gesture results on a timer, wire to HomeScreen to display device status + current gesture + confidence.
+
+---
+
+## [2026-09-25] Session 8 | Android Phase 2 -- Polished HomeScreen + Fake Classifier
+
+**Done:**
+- HomeViewModel: fake gesture emitter (8 classes, 72-97% confidence, 28-55ms latency, 1.8s interval)
+  Auto-switches to real BLE data when ESP32 connects. Falls back to fake on disconnect.
+- Design system components (McComponents.kt):
+  - McCard -- rounded surface card with CardBackground colour
+  - McConfidenceBar -- animated animated progress bar (tween 400ms)
+  - McChannelBar -- signal quality bar: EXCELLENT/GOOD/FAIR/POOR with colour coding
+  - McStatusDot -- pulsing colour dot (green=connected, red=disconnected)
+  - McStatCard -- 2-line metric tile
+- GestureDisplay.kt:
+  - gestureSymbol() -- monospace ASCII symbol per gesture class (no emojis)
+  - GestureDisplayCard -- AnimatedContent crossfade on gesture change, confidence bar, latency row
+- HomeScreen (full rebuild):
+  - Top bar (MYOCONTROL + demo mode label + settings icon)
+  - Device card (status dot + name + Connect/Disconnect button)
+  - GestureDisplayCard
+  - Today stats row: Accuracy, Gestures, Latency
+  - Signal quality card (4 channels, colour-coded per McColors.Ch1-4)
+  - Emergency stop button (red, full width, only visible when connected)
+- Commit 77fd039, pushed to main
+
+**Next:** Phase 3 (live 4-ch waveform on MonitorScreen) needs hardware.
+While waiting for hardware: build TrainScreen stub into full calibration UI.
+
+---
+
+## Session 9 — 2026-09-25 Android Gradle Sync Fix
+**Time:** 2026-09-25 19:20
+
+### Gradle Sync Error
+Android Studio opened MyoControl, Gradle downloaded 9.4.1, sync failed:
+```
+Plugin [id: 'com.google.devtools.ksp', version: '2.2.0-1.0.29'] was not found
+```
+
+### Root Cause
+KSP 2.2.0-1.0.29 does not exist in Maven/Google repositories.
+KSP releases lag Kotlin releases — 2.2.0 KSP artifacts not yet published.
+
+### Fix
+Downgraded in `gradle/libs.versions.toml`:
+- `kotlin: 2.2.0 → 2.1.0`
+- `ksp: 2.2.0-1.0.29 → 2.1.0-1.0.29`
+
+These are the same versions as the working coffee-operations app.
+**Next:** Re-sync Gradle in Android Studio (File → Sync Project with Gradle Files)
+
