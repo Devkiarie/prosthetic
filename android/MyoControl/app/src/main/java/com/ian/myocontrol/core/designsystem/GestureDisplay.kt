@@ -21,24 +21,8 @@ import com.ian.myocontrol.domain.model.GestureLabel
 import com.ian.myocontrol.domain.model.GestureResult
 
 /**
- * Maps each GestureLabel to a descriptive unicode symbol.
- * Safe on all API levels — no emoji.
- */
-fun gestureSymbol(label: GestureLabel): String = when (label) {
-    GestureLabel.REST        -> " -- "
-    GestureLabel.OPEN_HAND   -> "[ ]"
-    GestureLabel.POWER_GRASP -> "[X]"
-    GestureLabel.PINCH       -> "(.)"
-    GestureLabel.POINT       -> "[>]"
-    GestureLabel.WRIST_FLEX  -> "[v]"
-    GestureLabel.WRIST_EXT   -> "[^]"
-    GestureLabel.THUMBS_UP   -> "[+]"
-}
-
-/**
- * Hero gesture card — warm peach gradient background, decorative circle backdrop,
- * animated gesture name + confidence bar.
- * Matches the reference "Open Hand / 94% CONFIDENCE" card style.
+ * Hero gesture card — warm peach gradient, decorative backdrop circle,
+ * dynamic hand illustration (Canvas), animated gesture name + confidence bar.
  */
 @Composable
 fun GestureDisplayCard(
@@ -67,104 +51,88 @@ fun GestureDisplayCard(
             )
             .padding(20.dp)
     ) {
-        // Decorative backdrop circle (low-opacity, behind content)
+        // Decorative backdrop circle
         Box(
             modifier = Modifier
-                .size(140.dp)
-                .align(Alignment.CenterStart)
-                .offset(x = (-20).dp)
+                .size(150.dp)
+                .align(Alignment.CenterEnd)
+                .offset(x = 20.dp)
                 .clip(CircleShape)
-                .background(McColors.Coral.copy(alpha = 0.10f))
+                .background(McColors.Coral.copy(alpha = 0.08f))
         )
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
+        Row(
+            modifier          = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            // Symbol — monospace, crossfades on change
-            AnimatedContent(
-                targetState = gestureSymbol(label),
-                transitionSpec = {
-                    fadeIn(tween(300)) togetherWith fadeOut(tween(200))
-                },
-                label = "gesture_symbol"
-            ) { symbol ->
-                Text(
-                    text       = symbol,
-                    fontSize   = 52.sp,
-                    fontWeight = FontWeight.Light,
-                    color      = McColors.Coral,
-                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
-                )
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Gesture name — slides up on change
-            AnimatedContent(
-                targetState = label.displayName,
-                transitionSpec = {
-                    slideInVertically { it / 2 } + fadeIn() togetherWith
-                    slideOutVertically { -it / 2 } + fadeOut()
-                },
-                label = "gesture_name"
-            ) { name ->
-                Text(
-                    text      = name.uppercase(),
-                    style     = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color     = McColors.TextPrimary,
-                    textAlign = TextAlign.Center
-                )
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // Confidence bar
-            McConfidenceBar(
-                confidence = confidence,
-                fillColor  = confidenceColor,
-                modifier   = Modifier.fillMaxWidth(),
-                height     = 8.dp
+            // ── Left: hand illustration (dynamic Canvas) ─────────────────────
+            GestureIllustration(
+                gesture  = label,
+                modifier = Modifier.size(120.dp)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-            // Confidence % row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            // ── Right: name + confidence + latency ───────────────────────────
+            Column(modifier = Modifier.weight(1f)) {
+
+                // Gesture name — slides on change
+                AnimatedContent(
+                    targetState = label.displayName,
+                    transitionSpec = {
+                        slideInVertically { it / 2 } + fadeIn() togetherWith
+                        slideOutVertically { -it / 2 } + fadeOut()
+                    },
+                    label = "gesture_name"
+                ) { name ->
+                    Text(
+                        text       = name.uppercase(),
+                        style      = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.ExtraBold,
+                        color      = McColors.TextPrimary,
+                        letterSpacing = 0.5.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Big confidence number
+                AnimatedContent(
+                    targetState = "${"%.0f".format(confidence * 100)}%",
+                    transitionSpec = {
+                        fadeIn(tween(300)) togetherWith fadeOut(tween(200))
+                    },
+                    label = "confidence_pct"
+                ) { pct ->
+                    Text(
+                        text       = pct,
+                        fontSize   = 36.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color      = confidenceColor
+                    )
+                }
+
                 Text(
-                    text  = "CONFIDENCE",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = McColors.TextSecondary,
+                    text          = "CONFIDENCE",
+                    style         = MaterialTheme.typography.labelSmall,
+                    color         = McColors.TextSecondary,
                     letterSpacing = 0.8.sp
                 )
-                Text(
-                    text       = "${"%.1f".format(confidence * 100)}%",
-                    style      = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color      = confidenceColor
-                )
-            }
 
-            Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-            // Latency row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text  = "Latency",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = McColors.TextSecondary
+                // Confidence bar
+                McConfidenceBar(
+                    confidence = confidence,
+                    fillColor  = confidenceColor,
+                    modifier   = Modifier.fillMaxWidth(),
+                    height     = 6.dp
                 )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
                 Text(
-                    text  = "${latency} ms",
+                    text  = "${latency} ms latency",
                     style = MaterialTheme.typography.labelSmall,
                     color = McColors.TextSecondary
                 )

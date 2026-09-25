@@ -9,25 +9,25 @@ import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.os.ParcelUuid
 import com.ian.myocontrol.domain.model.BleConnectionState
+import com.ian.myocontrol.domain.model.BleDeviceInfo
 import com.ian.myocontrol.domain.model.GestureResult
 import com.ian.myocontrol.domain.model.SignalMetrics
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * BleManager -- owns the single BLE connection lifecycle.
+ * BleManager — owns the single BLE connection lifecycle.
  *
- * Phase 1: scan, connect, disconnect, reconnect.
- * Phase 2: expose fake gesture results via gestureResult flow.
- * Phase 3: decode SIGNAL_METRICS and GESTURE_RESULT notifications.
- *
- * All state is exposed as StateFlow so ViewModels collect via lifecycle-aware scope.
+ * Scanning now accumulates found devices into [scannedDevices] instead of
+ * auto-connecting. The UI shows a picker; the user taps a device to call
+ * [connectToDevice]. This allows choosing between multiple ESP32 units.
  */
 @Singleton
 class BleManager @Inject constructor(
@@ -36,47 +36,65 @@ class BleManager @Inject constructor(
     private val bluetoothAdapter: BluetoothAdapter? =
         (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
 
-    // Connection state
     private val _connectionState = MutableStateFlow<BleConnectionState>(BleConnectionState.Disconnected)
     val connectionState: StateFlow<BleConnectionState> = _connectionState.asStateFlow()
 
-    // Gesture result notifications
+    /** Devices found during current scan session — cleared on each new scan start. */
+    private val _scannedDevices = MutableStateFlow<List<BleDeviceInfo>>(emptyList())
+    val scannedDevices: StateFlow<List<BleDeviceInfo>> = _scannedDevices.asStateFlow()
+
     private val _gestureResult = MutableStateFlow<GestureResult?>(null)
     val gestureResult: StateFlow<GestureResult?> = _gestureResult.asStateFlow()
 
-    // Signal metrics notifications
     private val _signalMetrics = MutableStateFlow<SignalMetrics?>(null)
     val signalMetrics: StateFlow<SignalMetrics?> = _signalMetrics.asStateFlow()
 
     private var gatt: BluetoothGatt? = null
 
-    // --- Scan ------------------------------------------------------------------
+    // ── Scan ─────────────────────────────────────────────────────────────────
 
     @SuppressLint("MissingPermission")
     fun startScan() {
         val scanner = bluetoothAdapter?.bluetoothLeScanner ?: return
+        _scannedDevices.value = emptyList()          // clear previous results
         _connectionState.value = BleConnectionState.Scanning
 
-        val filter = ScanFilter.Builder()
-            .setServiceUuid(ParcelUuid(MyoGatt.SERVICE_UUID))
-            .build()
+        // Broad scan — no service UUID filter so we show ALL nearby BLE devices,
+        // not just those already advertising our custom service UUID.
         val settings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
             .build()
 
-        scanner.startScan(listOf(filter), settings, scanCallback)
+        scanner.startScan(null, settings, scanCallback)
     }
 
     @SuppressLint("MissingPermission")
     fun stopScan() {
         bluetoothAdapter?.bluetoothLeScanner?.stopScan(scanCallback)
+        // If still in Scanning state (user cancelled), revert to Disconnected
+        if (_connectionState.value is BleConnectionState.Scanning) {
+            _connectionState.value = BleConnectionState.Disconnected
+        }
     }
 
     @SuppressLint("MissingPermission")
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            stopScan()
-            connect(result.device)
+            val device = result.device
+            val info = BleDeviceInfo(
+                name    = device.name ?: "Unknown device",
+                address = device.address,
+                rssi    = result.rssi,
+                device  = device
+            )
+            _scannedDevices.update { current ->
+                val existing = current.indexOfFirst { it.address == info.address }
+                if (existing >= 0) {
+                    current.toMutableList().also { it[existing] = info }
+                } else {
+                    current + info
+                }
+            }
         }
 
         override fun onScanFailed(errorCode: Int) {
@@ -84,12 +102,14 @@ class BleManager @Inject constructor(
         }
     }
 
-    // --- Connect ---------------------------------------------------------------
+    // ── Connect ───────────────────────────────────────────────────────────────
 
+    /** Called from the UI when the user selects a device from the picker. */
     @SuppressLint("MissingPermission")
-    fun connect(device: BluetoothDevice) {
-        _connectionState.value = BleConnectionState.Connecting(device.address)
-        gatt = device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
+    fun connectToDevice(info: BleDeviceInfo) {
+        stopScan()
+        _connectionState.value = BleConnectionState.Connecting(info.address)
+        gatt = info.device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
     }
 
     @SuppressLint("MissingPermission")
@@ -98,9 +118,10 @@ class BleManager @Inject constructor(
         gatt?.close()
         gatt = null
         _connectionState.value = BleConnectionState.Disconnected
+        _scannedDevices.value = emptyList()
     }
 
-    // --- GATT callbacks --------------------------------------------------------
+    // ── GATT callbacks ────────────────────────────────────────────────────────
 
     @SuppressLint("MissingPermission")
     private val gattCallback = object : BluetoothGattCallback() {
@@ -138,13 +159,13 @@ class BleManager @Inject constructor(
             value: ByteArray
         ) {
             when (characteristic.uuid) {
-                MyoGatt.CHAR_GESTURE_RESULT  -> decodeGestureResult(value)
-                MyoGatt.CHAR_SIGNAL_METRICS  -> decodeSignalMetrics(value)
+                MyoGatt.CHAR_GESTURE_RESULT -> decodeGestureResult(value)
+                MyoGatt.CHAR_SIGNAL_METRICS -> decodeSignalMetrics(value)
             }
         }
     }
 
-    // --- Notification helpers --------------------------------------------------
+    // ── Notification helpers ──────────────────────────────────────────────────
 
     @SuppressLint("MissingPermission")
     private fun enableNotification(gatt: BluetoothGatt, charUuid: java.util.UUID) {
@@ -155,7 +176,7 @@ class BleManager @Inject constructor(
         gatt.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
     }
 
-    // --- Payload decoders -----------------------------------------------------
+    // ── Payload decoders ──────────────────────────────────────────────────────
 
     private fun decodeGestureResult(bytes: ByteArray) {
         if (bytes.size < 7) return
@@ -181,7 +202,7 @@ class BleManager @Inject constructor(
         )
     }
 
-    // --- Config write ----------------------------------------------------------
+    // ── Config write ──────────────────────────────────────────────────────────
 
     @SuppressLint("MissingPermission")
     fun sendEmergencyStop() {

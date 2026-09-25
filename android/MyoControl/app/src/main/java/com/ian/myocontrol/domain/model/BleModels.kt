@@ -1,5 +1,7 @@
 package com.ian.myocontrol.domain.model
 
+import android.bluetooth.BluetoothDevice
+
 /**
  * The state of the BLE connection to the ESP32-S3.
  */
@@ -52,3 +54,14 @@ enum class GestureLabel(val displayName: String) {
             entries.getOrElse(classIndex) { REST }
     }
 }
+
+/**
+ * A BLE device found during scanning — carries the BluetoothDevice handle
+ * so the UI can display name/address/RSSI and the manager can connect.
+ */
+data class BleDeviceInfo(
+    val name:    String,
+    val address: String,
+    val rssi:    Int,
+    val device:  BluetoothDevice
+)

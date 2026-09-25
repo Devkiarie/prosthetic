@@ -28,7 +28,6 @@ import com.ian.myocontrol.core.ble.rememberBlePermissionRequest
 import com.ian.myocontrol.core.designsystem.*
 import com.ian.myocontrol.core.theme.McColors
 import com.ian.myocontrol.domain.model.BleConnectionState
-
 @Composable
 fun HomeScreen(
     onOpenSettings: () -> Unit = {},
@@ -43,6 +42,19 @@ fun HomeScreen(
 
     // Runtime BLE permissions — request on Connect press, call ViewModel only when granted
     val requestBlePermissions = rememberBlePermissionRequest { viewModel.onConnectClick() }
+
+    // BLE device picker — visible during scanning
+    val scannedDevices by viewModel.scannedDevices.collectAsStateWithLifecycle()
+    val showPicker = isScanning || scannedDevices.isNotEmpty()
+
+    if (showPicker) {
+        BleDevicePicker(
+            devices      = scannedDevices,
+            isScanning   = isScanning,
+            onDismiss    = { viewModel.onConnectClick() }, // cancel/stop scan
+            onDevicePick = { device -> viewModel.onDeviceSelected(device) }
+        )
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
