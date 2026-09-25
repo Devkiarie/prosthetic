@@ -71,6 +71,7 @@ class BleManager @Inject constructor(
     @SuppressLint("MissingPermission")
     fun stopScan() {
         bluetoothAdapter?.bluetoothLeScanner?.stopScan(scanCallback)
+        _scannedDevices.value = emptyList()   // clear so picker hides
         // If still in Scanning state (user cancelled), revert to Disconnected
         if (_connectionState.value is BleConnectionState.Scanning) {
             _connectionState.value = BleConnectionState.Disconnected
