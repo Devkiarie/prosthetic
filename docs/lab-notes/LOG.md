@@ -183,3 +183,24 @@ Each entry: Date | Session # | What was done | Measurements (actual, not targets
 **Next session:** CNN training notebook (02_cnn_training.ipynb). Input: X_balanced.npy + y_balanced.npy. Target: F1 > 0.85 on held-out test set.
 
 ---
+
+## [2026-09-25] Session 6 | Android App Architecture Review (MyoControl)
+
+**Done:**
+- Reviewed MyoControl BLE Android app proposal (6 screens, phased build strategy)
+- Identified and documented 5 gaps:
+  1. BLE GATT structure: defined 5 characteristics (GESTURE_RESULT, SIGNAL_METRICS, CALIBRATION_CMD, CONFIG, RAW_STREAM)
+  2. Tech stack: decided Kotlin + Jetpack Compose (native BLE, existing skill)
+  3. Calibration data flow: Option A -- fine-tune last Dense layer on phone via TFLite, send weights to ESP32 via BLE
+  4. Prosthetic Control screen (animated hand): Phase 6 -- last, depends on servo firmware
+  5. Emergency stop: must be always-visible floating button, < 100 ms response
+- Build phases confirmed: Phase 1+2 can start now (BLE connect + fake classifier), Phase 3+ needs hardware
+- Logged in docs, vault note created, wiki updated
+
+**Measurements:** N/A (design/architecture session)
+
+**Pass/Fail:** N/A
+
+**Next session (Android):** Set up Android project (Kotlin + Compose, Hilt, Room, Navigation). Build Home screen + BLE scan. Use fake classifier.
+
+---
