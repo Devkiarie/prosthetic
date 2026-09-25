@@ -440,3 +440,27 @@ See below in response — Tinkercad / Fusion 360 / Blender + Bambu/Creality prin
 ### Android Studio auto-changes committed
 - libs.versions.toml: added androidx-ui-text-google-fonts library alias
 - build.gradle.kts: added google fonts implementation dependency (needed for Manrope)
+
+## Session 19 — 2026-09-25 .blend Conversion + STL Extraction
+**Commit:** d7b142d
+
+### Problem
+Ada Right v1.1.blend was created in Blender 2.7x — Blender 5.2 (snap) crashed with
+"Corrupt .blend file, unexpected data size" — format too old.
+
+### Solution
+1. Downloaded Blender 4.2.0 LTS portable (~336MB, no sudo) to ~/.local/
+2. Blender 4.2 opened the old file and exported all 30 mesh objects as individual STLs
+3. Verified: Blender 5.2 imports finger STL cleanly (14,248 verts, no errors)
+4. Deleted Blender 4.2 portable and tmp download after conversion
+
+### Extracted STLs (hardware/hand_stl/Ada_3D_model_files/STLs/Right Hand/extracted/)
+- 0th_Thumb.stl, 1st_finger.stl to 4th_finger.stl — 5 finger assemblies
+- 5th_Palm.stl, Master_-_Palm.stl — palm body variants
+- Dorsal_cover.stl, PCB_bracket.stl, Boolean_Union_-_Wrist_connector.stl
+- Boolean difference/union tools for servo pocket cuts
+
+### How to open in Blender 5.2
+File → Import → STL → select any extracted STL
+Then import multiple: 5th_Palm.stl + all finger STLs for full hand view
+
