@@ -5,7 +5,13 @@
   Ring: 23436.8 x 70280.3 x 41727.2 mm
   Little: 23058.0 x 56209.8 x 34607.1 mm
 
-  Palm Z max: 46112.69 mm
+  Palm Z max: 46.11 mm  (should be ~46 mm)
+    Cut_Thumb: 70692 -> 69602 faces (delta -1090)
+    Cut_Index: 69602 -> 69185 faces (delta -417)
+    Cut_Middle: 69185 -> 68874 faces (delta -311)
+    Cut_Ring: 68874 -> 68452 faces (delta -422)
+    Cut_Little: 68452 -> 68183 faces (delta -269)
+    Cut_Wrist: 68183 -> 65997 faces (delta -2186)
   6 pockets cut into palm.
 Info: File exported successfully
   Palm STL exported -> /home/kiarie/school/Final Year project/hardware/hand_stl/modified/5th_Palm_with_servo_pockets.stl
@@ -15,12 +21,12 @@ Info: Saved as "Full_Hand_with_servo_pockets.blend"
   Full assembly blend: /home/kiarie/school/Final Year project/hardware/hand_stl/modified/Full_Hand_with_servo_pockets.blend
   Palm STL (printable): /home/kiarie/school/Final Year project/hardware/hand_stl/modified/5th_Palm_with_servo_pockets.stl
 Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:34:58)
-Timer 'STL Import' took 21.05 ms
-Timer 'STL Import' took 7.31 ms
-Timer 'STL Import' took 10.88 ms
-Timer 'STL Import' took 7.11 ms
-Timer 'STL Import' took 14.03 ms
-Timer 'STL Import' took 7.73 ms
-Timer 'STL Export' took 16.94 ms
+Timer 'STL Import' took 19.73 ms
+Timer 'STL Import' took 7.39 ms
+Timer 'STL Import' took 12.52 ms
+Timer 'STL Import' took 8.57 ms
+Timer 'STL Import' took 7.84 ms
+Timer 'STL Import' took 7.62 ms
+Timer 'STL Export' took 10.50 ms
 
 Blender quit

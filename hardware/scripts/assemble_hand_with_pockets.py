@@ -95,8 +95,11 @@ if 'Palm' in imported:
     # Bounding box corners in world space
     bb = [palm_obj.matrix_world @ v.co for v in palm_obj.data.vertices]
     z_max_world = max(v.z for v in bb)
-    z_max_mm    = z_max_world * 1000
-    print(f"\n  Palm Z max: {z_max_mm:.2f} mm")
+    # Blender units = mm for this STL -- do NOT multiply by 1000
+    z_max_mm = z_max_world
+    print(f"\n  Palm Z max: {z_max_mm:.2f} mm  (should be ~46 mm)")
+
+    OVERSHOOT = 5.0  # extend cutter above palm surface to avoid coplanar-face Boolean failure
 
     # 5 x SG90 finger pockets on dorsal face
     FINGER_POCKETS = [
@@ -108,24 +111,44 @@ if 'Palm' in imported:
     ]
     cutters = []
     for cname, xc, yc in FINGER_POCKETS:
-        c = add_cutter(cname, xc, yc, z_max_mm, SG90_CUT_X, SG90_CUT_Y, SG90_CUT_Z)
+        # Cutter top = z_max + OVERSHOOT (punches through surface), depth = SG90_CUT_Z
+        c = add_cutter(cname, xc, yc,
+                       z_max_mm + OVERSHOOT,         # start above surface
+                       SG90_CUT_X, SG90_CUT_Y,
+                       SG90_CUT_Z + OVERSHOOT)       # total depth = pocket + overshoot
         c.display_type = 'WIRE'
         cutters.append(c)
 
     # 1 x MG996R wrist pocket at proximal end
-    wrist_cutter = add_cutter('Cut_Wrist', 0.0, -50.0, z_max_mm,
-                               MG_CUT_X, MG_CUT_Y, MG_CUT_Z)
+    wrist_cutter = add_cutter('Cut_Wrist', 0.0, -50.0,
+                               z_max_mm + OVERSHOOT,
+                               MG_CUT_X, MG_CUT_Y,
+                               MG_CUT_Z + OVERSHOOT)
     wrist_cutter.display_type = 'WIRE'
     cutters.append(wrist_cutter)
 
     # Boolean difference: cut all pockets from palm
     for c in cutters:
+        # Re-select palm before each boolean (active obj changes after each apply)
+        bpy.ops.object.select_all(action='DESELECT')
+        palm_obj.select_set(True)
+        bpy.context.view_layer.objects.active = palm_obj
+
         mod = palm_obj.modifiers.new(name=f'Bool_{c.name}', type='BOOLEAN')
         mod.operation = 'DIFFERENCE'
-        mod.solver = 'EXACT'   # Blender 5.x: FLOAT | EXACT | MANIFOLD (not FAST)
+        mod.solver = 'MANIFOLD'   # Blender 5.x: best for non-manifold input meshes
         mod.object = c
-        bpy.context.view_layer.objects.active = palm_obj
+        tri_before = len(palm_obj.data.polygons)
         bpy.ops.object.modifier_apply(modifier=mod.name)
+        tri_after = len(palm_obj.data.polygons)
+        print(f"    {c.name}: {tri_before} -> {tri_after} faces (delta {tri_after-tri_before:+d})")
+
+        # Hide cutter (don't remove yet -- needed as reference until apply is done)
+        c.hide_viewport = True
+        c.hide_render = True
+
+    # Now remove all cutters
+    for c in cutters:
         bpy.data.objects.remove(c, do_unlink=True)
 
     print(f"  {len(cutters)} pockets cut into palm.")
