@@ -5,6 +5,40 @@ Each entry: Date | Session # | What was done | Measurements (actual, not targets
 
 ---
 
+## [2026-10-05] Session 21 | Proposal v2 + CNN Training Launch + Servo Pockets
+
+**Done:**
+- Proposal gap analysis (5 gaps found vs Dr Irene's review comments):
+  1. Table 1 expanded from 5 to 9 columns (Acquisition Hardware, Model Type, Gesture Classes, Accuracy/F1, Cost)
+  2. Budget arithmetic corrected: Tier A = KES 3,150 (not 2,950)
+  3. References [2]–[6],[8],[9] completed with DOIs/pages; [3] corrected to IEEE TBME; [8] flagged as preprint
+  4. Grounding/reference electrode strategy + anti-aliasing sentence added to §3.2.1
+  5. [8] and [9] cited in body text (§2.10)
+- All "2-DOF gripper" references replaced with 5-finger tendon-driven hand (5x SG90 + 1x MG996R)
+  - Gesture-to-posture mapping updated: all 8 gestures produce distinct finger positions
+  - Budget split: SG90 x5 (KES 750) + MG996R x1 (KES 400). Total: KES 8,700
+- Saved as ENE212-0069-2022_PROJECT_PROPOSAL_SEP-2026_REVISED_v2.docx
+- STL backup created: hardware/hand_stl/backup_20261005_235508.zip (43 MB, all STLs + blends)
+- Wrote ml/scripts/train_cnn.py (full pipeline: baselines + 1D-CNN + INT8 quantization)
+- CNN training launched (background PID 1898348), epoch 32+ at time of log
+- Blender servo pocket script written and executed (hardware/scripts/add_servo_pockets.py)
+- Servo pockets cut into 5th_Palm.stl: 5x SG90 (dorsal face) + 1x MG996R (wrist proximal)
+- Output: hardware/hand_stl/modified/5th_Palm_with_servo_pockets.stl (3.4 MB, watertight PASS)
+  - Ada_Right_v5_servo_pockets.blend (1.7 MB, scene preserved with cutter objects hidden)
+
+**Measurements:**
+| Test | Target | Actual | Pass/Fail |
+|---|---|---|---|
+| Modified palm watertight | True | True | PASS |
+| Palm Z extents preserved | -11.8 to 46.1 mm | -11.8 to 46.1 mm | PASS |
+| Palm face count | N/A | 70,692 faces | INFO |
+
+**Pass/Fail:** Blender PASS | STL backup PASS | CNN training in progress
+
+**Next session:** Review CNN results when training finishes. If F1 < 0.85: increase model capacity or try quantization-aware training. Begin KiCad schematic (Phase 4, single-channel first). Order components.
+
+---
+
 ## [2026-09-24] Session 0 | Project Setup
 
 **Done:**
@@ -491,3 +525,35 @@ Then import multiple: 5th_Palm.stl + all finger STLs for full hand view
 - Blender 5.2.2 (snap) — STL import + rigging + animation ✓
 - OpenSCAD 2021.01 (apt) — available for parametric mods
 - MeshLab — removed (GL driver issue)
+
+---
+
+## [2026-10-02] Session 19 | Proposal Restructure (Dr Irene Review Comments)
+
+**Done:**
+- Received Dr Irene's formal review comments on the proposal (Ian_Kabura_Project_Proposal_Review_Comments.docx)
+- Used Fedley Sikolia's door lock proposal as the departmental format reference
+- Complete restructure of proposal into standard JKUAT 4-chapter format:
+  - Added: Declaration page, formal Abstract (replaced Executive Summary), TOC field, List of Figures, List of Tables, List of Abbreviations
+  - Chapter 1 (Introduction): Background with IEEE refs + cited sEMG specs, tighter Problem Statement, new Project Justification section, new Scope section, Objectives reduced to 3 specific (Design, Implement, Test & Evaluate) per reviewer instructions
+  - Chapter 2 (Literature Review): Reorganised by technical themes (not per-paper summaries): signal characteristics, analog front-end design, feature extraction, ML methods, TinyML deployment, calibration, actuation, cost, critique, gap table, proposed work
+  - Chapter 3 (Methodology): Written per specific objectives; added gain calculations, filter component values, electrical safety section, SNR/crosstalk measurement procedure, complete data path, NinaPro-to-4ch mapping, train/val/test split with subject independence, latency definitions (3 components), gesture-to-gripper mapping for all 8 classes, participant testing protocol, ethics section, cost tiers
+  - Chapter 4 (Expected Results): Linked to specific objectives, framed as targets not achievements, includes 5-subject statistical limitations
+  - Budget in KES (Table 6), Timeplan Gantt (Table 7), IEEE-format References
+- Addressed all 9 key technical issues from the review:
+  1. 8 gestures vs 2-DOF: explicitly mapped each class to gripper action (Point/Thumbs Up = control commands)
+  2. NinaPro DB5 vs 4-channel: channels [0,4,8,12], 50-sample windows at 200 Hz
+  3. Features vs 1D-CNN: 24-element feature vector as input (not raw time series)
+  4. Personalisation: transfer learning fine-tunes last dense layer, 3-min protocol
+  5. Latency: defined 3 components (inference, decision, total system response)
+  6. Low cost: 3 tiers defined, USD 20 = Tier A electronics BOM, comparison baseline stated
+  7. 5-subject: descriptive stats only, limitation stated
+  8. Safety: battery isolation, 10 kOhm current-limiting, leakage test, ethics approval
+- Generated revised DOCX: ENE212-0069-2022_PROJECT_PROPOSAL_SEP-2026_REVISED.docx
+- 4 chapters + preliminary pages + budget + timeplan + references, 6 tables, 237 paragraphs
+
+**Measurements:** N/A (documentation session)
+
+**Pass/Fail:** N/A
+
+**Next session:** Review revised proposal with Dr Irene. Address any remaining comments. Order components (CRITICAL path). Begin CNN training notebook (02_cnn_training.ipynb).

@@ -1,0 +1,40 @@
+00:03.011  blend            | Read blend: "/home/kiarie/school/Final Year project/hardware/hand_stl/Ada_3D_model_files/Blender Files/Right Hand/Ada_Right_v4_animated.blend"
+Importing palm: /home/kiarie/school/Final Year project/hardware/hand_stl/Ada_3D_model_files/STLs/Right Hand/extracted/5th_Palm.stl
+  Palm dimensions: ['93731.5mm', '123338.0mm', '57893.3mm']
+  Cutter: Pocket_Thumb at (34.0,-10.0), top Z=46.1, depth=29.5
+  Cutter: Pocket_Index at (18.0,-10.0), top Z=46.1, depth=29.5
+  Cutter: Pocket_Middle at (4.0,-10.0), top Z=46.1, depth=29.5
+  Cutter: Pocket_Ring at (-12.0,-10.0), top Z=46.1, depth=29.5
+  Cutter: Pocket_Little at (-28.0,-10.0), top Z=46.1, depth=29.5
+  Cutter: Pocket_Wrist_MG996R at (0,-50), depth=43.4
+Applying boolean differences ...
+  Applied: Bool_Pocket_Thumb
+  Applied: Bool_Pocket_Index
+  Applied: Bool_Pocket_Middle
+  Applied: Bool_Pocket_Ring
+  Applied: Bool_Pocket_Little
+  Applied: Bool_Pocket_Wrist_MG996R
+
+Exporting modified palm -> /home/kiarie/school/Final Year project/hardware/hand_stl/modified/5th_Palm_with_servo_pockets.stl
+Info: File exported successfully
+  STL exported.
+Saving scene -> /home/kiarie/school/Final Year project/hardware/hand_stl/modified/Ada_Right_v5_servo_pockets.blend
+Info: Saved as "Ada_Right_v5_servo_pockets.blend"
+  Blend saved.
+
+Mesh validation:
+Modified palm: verts=35336, faces=70692
+Watertight: True
+Bounds Z: -11.8 to 46.1 mm
+Z_max = 46112.7 mm  (should be ~46.1 from palm dorsal face)
+POCKET CHECK PASS
+
+
+=== DONE ===
+  STL : /home/kiarie/school/Final Year project/hardware/hand_stl/modified/5th_Palm_with_servo_pockets.stl
+  Blend: /home/kiarie/school/Final Year project/hardware/hand_stl/modified/Ada_Right_v5_servo_pockets.blend
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:34:58)
+Timer 'STL Import' took 69.77 ms
+Timer 'STL Export' took 245.26 ms
+
+Blender quit

@@ -1,0 +1,26 @@
+  Palm: 93731.5 x 123338.0 x 57893.3 mm
+  Thumb: 86353.5 x 66164.0 x 31474.4 mm
+  Index: 26302.6 x 66231.4 x 40255.9 mm
+  Middle: 21427.4 x 73394.6 x 44602.1 mm
+  Ring: 23436.8 x 70280.3 x 41727.2 mm
+  Little: 23058.0 x 56209.8 x 34607.1 mm
+
+  Palm Z max: 46112.69 mm
+  6 pockets cut into palm.
+Info: File exported successfully
+  Palm STL exported -> /home/kiarie/school/Final Year project/hardware/hand_stl/modified/5th_Palm_with_servo_pockets.stl
+Info: Saved as "Full_Hand_with_servo_pockets.blend"
+
+=== DONE ===
+  Full assembly blend: /home/kiarie/school/Final Year project/hardware/hand_stl/modified/Full_Hand_with_servo_pockets.blend
+  Palm STL (printable): /home/kiarie/school/Final Year project/hardware/hand_stl/modified/5th_Palm_with_servo_pockets.stl
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:34:58)
+Timer 'STL Import' took 21.05 ms
+Timer 'STL Import' took 7.31 ms
+Timer 'STL Import' took 10.88 ms
+Timer 'STL Import' took 7.11 ms
+Timer 'STL Import' took 14.03 ms
+Timer 'STL Import' took 7.73 ms
+Timer 'STL Export' took 16.94 ms
+
+Blender quit
