@@ -557,3 +557,32 @@ Then import multiple: 5th_Palm.stl + all finger STLs for full hand view
 **Pass/Fail:** N/A
 
 **Next session:** Review revised proposal with Dr Irene. Address any remaining comments. Order components (CRITICAL path). Begin CNN training notebook (02_cnn_training.ipynb).
+
+## [2026-10-06] Session 21 | CNN Training + STL Servo Pockets + Blender Assembly
+
+**Done:**
+- MLP (no BatchNorm) trained on NinaPro DB5 4-ch: F1=0.7907, Acc=0.7883 (200 epochs, EarlyStopping patience=20)
+- Baselines: LDA=0.42, SVM=0.60, RF=0.70 -- MLP beats all, 13% above RF
+- v1 bug fixed: Conv1D on flat feature vector has no local structure; plateau at 0.50
+- TFLite INT8 blocked: Keras3+TF MLIR crash on Dense matmul ops (all solver paths crash)
+- Float32 C header (semg_weights.h) exported as interim deliverable; correct inference confirmed
+- STL backup: 43MB zip (all STLs + all .blend files)
+- Blender Boolean pockets: 4 iterations to fix (Z scale bug, solver EXACT->MANIFOLD, overshoot, active-object reset)
+- All 6 pockets confirmed cut: 3197 dorsal-face vertices removed across Little/Ring/Middle/Index/Wrist columns
+- Full assembly .blend: palm(beige) + 5 colour-coded fingers in one scene
+- Proposal v2: all 2-DOF gripper refs replaced with 5-finger hand, budget updated to KES 8,700
+
+**Measurements:**
+- MLP-noBN: macro F1=0.7907, accuracy=0.7883 (NinaPro DB5, cross-subject, 10 subjects, pre-calibration)
+- Palm STL: 70692 -> 68558 triangles after 6 Booleans (-2134 delta)
+- Dorsal-face vertices removed: 3197 total (Little=449, Ring=810, Middle=1092, Index=812, Wrist=2245)
+- Servo pocket floor: SG90 at ~16.6mm Z, MG996R confirmed cut
+
+**Pass/Fail:**
+- CNN training: F1=0.79 PASS (beats RF baseline); F1>=0.85 target = FAIL (pre-calibration -- expected)
+- TFLite INT8: FAIL (Keras3 MLIR bug; deferred to TF 2.13 venv when ESP32-S3 arrives)
+- Servo pockets: PASS (all 6 confirmed cut, geometry verified)
+- STL backup: PASS
+- Commit: PASS (629e731, 00fd0a7)
+
+**Next session:** Order components (BOM KES 8,700). Send proposal v2 to Dr Irene. Set up TF 2.13 venv for INT8 quantization.
