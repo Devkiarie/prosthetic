@@ -1,0 +1,65 @@
+=======================================================
+  FYP sEMG PROSTHETIC HAND — COMPLETE SHOPPING LIST
+  ENE212-0069-2022 | Ian Kabura
+=======================================================
+
+────────────────────────────────────────────────────
+  A. LCSC.COM  (order online → ships to Nairobi)
+     Upload docs/lcsc_bom_upload.csv at lcsc.com/bom
+────────────────────────────────────────────────────
+ 1. ESP32-S3-DevKitC-1-N8R8 (C20541519)           x1
+ 2. INA128UA/2K5 Instr. Amplifier SOIC-8 (C22233)  x4
+ 3. MCP6002-I/SN Op-Amp SOIC-8 (C116706)           x8
+ 4. SOP8-to-DIP8 adapter board (C5194)              x8
+
+────────────────────────────────────────────────────
+  B. ALIEXPRESS  (search terms given)
+────────────────────────────────────────────────────
+ 5. GY-PCA9685 16-ch I2C PWM servo driver board    x1
+    [search: "GY-PCA9685 servo driver module"]
+ 6. SG90 micro servo motor                          x6
+    [buy 6, use 5 + 1 spare; search: "SG90 servo"]
+ 7. MG996R standard servo motor                     x1
+    [search: "MG996R servo motor"]
+ 8. Ag/AgCl disposable surface electrodes 50-pack   x1
+    [search: "Ag AgCl surface EMG electrode 50pcs"]
+
+────────────────────────────────────────────────────
+  C. LOCAL NAIROBI  (Tom Mboya St / Luthuli Ave)
+────────────────────────────────────────────────────
+BREADBOARDING
+ 9. Full-size 830-point solderless breadboard       x3
+10. Jumper wire kit (M-M, M-F, F-F assorted 120pc)  x1
+11. DIP-8 (8-pin) IC socket                        x12
+
+POWER
+12. LM7805 5V voltage regulator (TO-220 package)    x2
+13. 9V battery                                       x2
+14. 9V battery clip/holder                          x2
+
+PASSIVES
+15. Resistor assortment kit (1Ω-1MΩ)                x1
+16. Ceramic capacitor kit (10pF-100nF)               x1
+17. Electrolytic capacitor 10uF 25V                 x10
+18. Electrolytic capacitor 100uF 25V                 x5
+19. 10kΩ single-turn potentiometer                   x4
+
+INDICATORS & MISC
+20. LED red                                          x5
+21. LED green                                        x5
+22. Resistor 330Ω (for LEDs)                        x10
+23. USB-C cable DATA (not charge-only)               x1
+    [ask "does it transfer data?" — many are charge-only]
+
+CONNECTORS & WIRING
+24. Female Dupont pin headers (2.54mm)          x2 strips
+25. Male pin headers (2.54mm straight)          x2 strips
+26. Shielded coaxial cable / screened wire      x2 metres
+    [for electrode leads — unshielded = 50Hz noise]
+27. Flexible hookup wire (red + black + colours) x1 roll each
+
+=======================================================
+  27 line items total
+  LCSC ~$21 | AliExpress ~$20 | Local ~KES 1,500
+  Grand total estimate: ~KES 7,500
+=======================================================
