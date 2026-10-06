@@ -615,3 +615,53 @@ Then import multiple: 5th_Palm.stl + all finger STLs for full hand view
 - `f2c1c3f` — docs: shopping list
 - `ee24ad8` — docs: LCSC BOM CSVs
 - `71472bf` — feat: INT8 TFLite model
+
+## [2026-10-06] Session 23 — Component Shopping + Git Cleanup
+
+### Component sourcing (Luthuli Ave dealer)
+Available and to buy today:
+- ESP32-S3-DevKitC-1: KSh 1,500 (HOLD — dealer has generic ESP, not confirmed S3)
+- SG90 servo x6: KSh 2,400 via LPO (overpriced at KSh 400 each, normal is KSh 150-200)
+- Breadboard x3, jumper wires, LM7805, 9V batteries, passives, caps, pots, LEDs: KSh 5,500
+- Heat shrink: KSh 2,500 quoted (OVERPRICED — normal KSh 100-300, negotiate)
+- Today's subtotal: KSh 8,820
+
+Unavailable locally — order online:
+- INA128P DIP-8 x4: AliExpress "INA128P DIP8"
+- MCP6002-I/P DIP-8 x8: AliExpress "MCP6002 DIP8"
+- GY-PCA9685 module x1: AliExpress
+- MG996R servo x1: AliExpress
+- Ag/AgCl electrodes 50pk: AliExpress / Kenyatta Hospital pharmacy
+- ESP32-S3-DevKitC-1-N8R8: LCSC C20541519
+
+Key warnings from shopping trip:
+- Local "ESP" is not ESP32-S3 — do not buy without module label confirming S3
+- LCSC C5194 is wrong part (74HC4049 logic buffer, not SOP8-DIP8 adapter)
+- Corrected sourcing: INA128P and MCP6002 DIP-8 from AliExpress directly (no adapters needed)
+- Potentiometer corrected from 10kΩ → 100kΩ in all docs
+
+### Git fix — large binary files purged from history
+- Problem: git push timed out / rejected — 679 MB of .mat + .keras files in history
+- Fix: git filter-repo --force to purge all large binaries from all commits
+- Force-push succeeded: d01b73c...e1a1d33 main -> main
+- .gitignore expanded: *.tflite, *.npy, *.pkl, *.keras, *.h5, training logs, semg_weights.h
+- Largest object in history: 4.6 MB (Full_Hand_with_servo_pockets.blend)
+
+### Disk cleanup
+- Freed ~4 GB: journal logs vacuumed (1.95 GB), syslogs deleted, Cursor wiped, VSCode cache cleared
+- Was 93% full → 91% (21 GB free)
+- Remaining large items: movies in Downloads (~25 GB, kept), VSCode extensions (1.2 GB, kept)
+
+### Deliverables
+- docs/components_order.txt: 37-item shopping list
+- docs/lcsc_bom_upload.csv: LCSC BOM upload file
+- docs/bom_breadboard_v1.csv: Full BOM with pricing
+- FYP_Shopping_Checklist.pdf: Printable checklist with warnings per item
+
+### Commits this session
+- ee24ad8: docs: LCSC BOM CSVs
+- f2c1c3f: docs: shopping list
+- 765e67d: docs: fix all stale files (7 files, statuses + values)
+- 4d2ebd0: docs: session 22 log
+- c06797d: fix: untrack large binary files + expand .gitignore
+- e1a1d33: (post filter-repo rewrite head)
