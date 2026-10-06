@@ -586,3 +586,32 @@ Then import multiple: 5th_Palm.stl + all finger STLs for full hand view
 - Commit: PASS (629e731, 00fd0a7)
 
 **Next session:** Order components (BOM KES 8,700). Send proposal v2 to Dr Irene. Set up TF 2.13 venv for INT8 quantization.
+
+## [2026-10-06] Session 22 — Stale file audit + component BOM
+
+### Files fixed
+- `ml-pipeline/quantization.md`: Not started → DONE (INT8 F1=0.7845, 123.7 KB, method documented)
+- `ml-pipeline/cnn-training.md`: Not started → DONE (MLP F1=0.7907, architecture explained)
+- `modules/gesture-classifier.md`: Wrong Conv1D arch → correct MLP no-BN, full results table
+- `modules/analog-front-end.md`: Status updated, G=50→G=51, LPF 500Hz→100Hz anti-alias, log added
+- `simulations/sallen-key-lpf.md`: Clarified two LPF stages; added 100Hz anti-alias RC derivation
+- `05_BOM_AND_PROCUREMENT.md`: RG=1.02k→1kΩ 1%, pot 10k→100kΩ, C_lp updated to 150nF
+- `modules/actuator-gripper.md` renamed → `modules/actuator-hand.md`; status updated
+
+### Component value derivations (done this session)
+- INA128 RG=1kΩ: G=1+50k/RG → G=51 at RG=1kΩ (1% for channel matching)
+- Anti-alias LPF: fs=200Hz, Nyquist=100Hz, R=10kΩ, C=150nF → fc=106Hz
+- Pot corrected to 100kΩ: Rin=10kΩ, max gain = 1+100k/10k = 11x (fills 3.3V ADC range)
+- I2C pull-ups 4.7kΩ: conservative for 400kHz, 400pF bus
+- LED resistors 330Ω: (3.3-2.0)/0.010 = 130Ω min; 330Ω gives 3.9mA safe
+
+### Shopping list generated
+- 37-item complete list → `docs/components_order.txt`
+- LCSC BOM upload CSV → `docs/lcsc_bom_upload.csv`
+- Full BOM CSV → `docs/bom_breadboard_v1.csv`
+
+### Commits
+- `765e67d` — docs: fix all stale files (58 files)
+- `f2c1c3f` — docs: shopping list
+- `ee24ad8` — docs: LCSC BOM CSVs
+- `71472bf` — feat: INT8 TFLite model
