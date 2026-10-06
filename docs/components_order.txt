@@ -1,0 +1,39 @@
+COMPONENTS ORDER — ELECTRONICS
+
+1.  ESP32-S3-DevKitC-1                    x1
+2.  INA128P Instrumentation Amplifier DIP-8   x4
+3.  MCP6002 Op-Amp DIP-8                  x8
+4.  PCA9685 I2C PWM Module                x1
+5.  SG90 Micro Servo Motor                x6
+6.  MG996R Servo Motor                    x1
+7.  Ag/AgCl Surface Electrodes            x50
+8.  Shielded Coaxial Cable                x2 metres
+9.  830-Point Solderless Breadboard       x3
+10. Jumper Wire Kit (M-M, M-F, F-F)       x1
+11. DIP-8 IC Socket                       x12
+12. LM7805 5V Voltage Regulator (TO-220)  x2
+13. 9V Battery                            x2
+14. 9V Battery Clip Holder                x2
+15. Resistor Assortment Kit               x1
+16. Ceramic Capacitor Assortment          x1
+17. Electrolytic Capacitor 10uF 25V       x10
+18. Electrolytic Capacitor 100uF 25V      x5
+19. Potentiometer 100k ohm                x4
+20. LED Red                               x5
+21. LED Green                             x5
+22. Resistor 330 ohm                      x10
+23. USB-C Data Cable                      x1
+24. Female Dupont Pin Headers 2.54mm      x2 strips
+25. Male Pin Headers 2.54mm Straight      x2 strips
+26. Hookup Wire Red                       x1 roll
+27. Hookup Wire Black                     x1 roll
+28. Hookup Wire Assorted Colours          x1 roll
+29. Fishing Line / Braided Monofilament   x5 metres
+30. M3 Bolt                               x20
+31. M3 Nut                                x20
+32. Precision Resistor 1k ohm 1%          x4
+33. Resistor 4.7k ohm                     x2
+34. Velcro Strap / Elastic Arm Band       x1
+35. Heat Shrink Tubing Assorted           x1 pack
+36. Ceramic Capacitor 150nF               x8
+37. Resistor 10k ohm                      x4

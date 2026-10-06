@@ -28,7 +28,7 @@ Each module is independently testable. Click through for details, test criteria,
 | 2 | [[modules/custom-pcb]] | Not started | 4-layer, KiCad, JLCPCB |
 | 3 | [[modules/dsp-firmware]] | Not started | ESP32-S3, FreeRTOS, 24 features |
 | 4 | [[modules/gesture-classifier]] | Not started | 1D-CNN, INT8, TFLite Micro |
-| 5 | [[modules/actuator-gripper]] | Not started | PCA9685, MG996R, 2-DOF gripper |
+| 5 | [[modules/actuator-hand]] | Not started | PCA9685, MG996R, 2-DOF gripper |
 | 6 | [[modules/ble-calibration]] | Not started | BLE GATT, transfer learning, mobile app |
 
 ---

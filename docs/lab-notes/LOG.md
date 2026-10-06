@@ -425,7 +425,7 @@ Upgraded actuator from 2-DOF gripper (2× MG996R) to 5-finger tendon-driven pros
 BOM delta: ~KES 650 (~USD 5). Still under USD 20 BOM. PCA9685 already in BOM and handles 16 channels.
 
 ### Files Updated
-- `modules/actuator-gripper.md` — full rewrite: motor placement, tendon mechanism, gesture-servo table, print specs, assembly order, PCA9685 channel map
+- `modules/actuator-hand.md` — full rewrite: motor placement, tendon mechanism, gesture-servo table, print specs, assembly order, PCA9685 channel map
 - `05_BOM_AND_PROCUREMENT.md` — 2× MG996R → 5× SG90 + 1× MG996R + nylon/elastic; filament 250g→350g
 - `docs/COMPREHENSIVE_PLAN.md` — SO5 and E4 block updated to 5-finger hand + 11-step assembly
 - Wiki entity `fyp-semg-prosthetic.md` — actuation, end-demo, system architecture all updated

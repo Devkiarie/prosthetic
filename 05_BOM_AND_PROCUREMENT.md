@@ -46,7 +46,7 @@ Note: The concept paper claims "sub-USD 20 component cost." At volume (100+ unit
 | 13 | 4.7 kΩ | I2C pull-ups | 4 | 2 | 8 | |
 | | **--- Trimmers ---** | | | | | |
 | 14 | 5 kΩ multi-turn trimmer | Twin-T notch tuning | 5 | 25 | 125 | |
-| 15 | 100 kΩ multi-turn trimmer | Variable gain adjust | 5 | 25 | 125 | |
+|| 15 | 100 kΩ multi-turn trimmer | Variable gain adjust (Rf, gives G=1–11) | 5 | 25 | 125 | |
 | | **--- Capacitors ---** | | | | | |
 | 16 | 10 nF C0G/NP0 ceramic | ADC anti-alias | 5 | 5 | 25 | |
 | 17 | 22 nF C0G/NP0 ceramic | LPF C_lp1 | 5 | 5 | 25 | |
@@ -101,7 +101,7 @@ Note: The concept paper claims "sub-USD 20 component cost." At volume (100+ unit
 | Designator | Value | Tolerance | Type | Purpose |
 |---|---|---|---|---|
 | R_in1, R_in2 | 10 kΩ | 1% | Metal film | Input protection |
-| R_G | 1.02 kΩ | 0.1% | Metal film | INA128 gain (G=50) |
+|| R_G | 1 kΩ | 1% | Metal film | INA128 gain (G=51, formula: G=1+50k/RG) |
 | R_hp1 | 12 kΩ | 0.1% | Metal film | Sallen-Key HPF |
 | R_hp2 | 24 kΩ | 0.1% | Metal film | Sallen-Key HPF |
 | R_lp1, R_lp2 | 10 kΩ | 0.1% | Metal film | Sallen-Key LPF |
@@ -121,8 +121,8 @@ Note: The concept paper claims "sub-USD 20 component cost." At volume (100+ unit
 | Designator | Value | Type | Temp Coeff | Purpose |
 |---|---|---|---|---|
 | C_hp1, C_hp2 | 470 nF | Polyester film | ±5% | HPF (fc=20 Hz) |
-| C_lp1 | 22 nF | C0G/NP0 ceramic | ±2% | LPF (fc=500 Hz) |
-| C_lp2 | 47 nF | C0G/NP0 ceramic | ±5% | LPF (fc=500 Hz) |
+|| C_lp1 | 150 nF | C0G/NP0 ceramic | ±2% | LPF anti-alias (fc=100 Hz for 200 Hz ADC) |
+|| C_lp2 | — | — | — | (removed — single RC sufficient for 1st order anti-alias) |
 | C_n1, C_n2 | 330 nF | Polyester film | ±5% | Twin-T notch |
 | C_n3 | 680 nF | Polyester film | ±5% | Twin-T notch |
 | C_aa | 10 nF | C0G/NP0 ceramic | ±5% | ADC anti-aliasing |
