@@ -2,7 +2,13 @@
 ml/venv/
 ml/data/ninapro_db5/          # NinaPro is large + license restricts redistribution
 ml/data/processed/*.npy        # Regenerable from scripts
-ml/models/*.keras              # Large float32 models (keep .tflite only)
+ml/models/*.keras              # Large float32 models
+ml/models/*.tflite             # TFLite binaries -- too large for GitHub
+ml/models/*.npy                # Normalisation stats -- regenerable
+ml/models/*.pkl                # Sklearn baseline models
+ml/models/*.h5
+ml/models/training_log*.txt    # Training logs -- regenerable
+ml/models/semg_weights.h       # C header -- regenerable from model
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
