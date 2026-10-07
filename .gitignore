@@ -8,6 +8,7 @@ ml/models/*.npy                # Normalisation stats -- regenerable
 ml/models/*.pkl                # Sklearn baseline models
 ml/models/*.h5
 ml/models/training_log*.txt    # Training logs -- regenerable
+ml/models/training_log_nobn.txt  # Also untracked explicitly
 ml/models/semg_weights.h       # C header -- regenerable from model
 __pycache__/
 *.pyc
