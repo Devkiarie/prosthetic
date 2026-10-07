@@ -10,7 +10,7 @@ AliExpress,search,MG996R servo,MG996R standard torque servo,1,2.5,2.5,325,
 Local,,Breadboard 830pt,Full-size solderless breadboard,3,1.5,4.5,585,Tom Mboya St
 Local,,Jumper wire kit,M-M M-F F-F 120pc assorted jumper wires,1,2.3,2.3,299,
 Local,,DIP-8 IC socket,8-pin DIP IC socket,12,0.1,1.2,156,
-Local,,10kΩ potentiometer,Single-turn 10kΩ pot,4,0.23,0.92,120,Variable gain stage
+Local,,100kΩ potentiometer,Single-turn 100kΩ pot,4,0.23,0.92,120,Variable gain stage
 Local,,LM7805 TO-220,5V linear regulator,2,0.31,0.62,81,9V->5V for servos
 Local,,Electrolytic caps kit,10µF + 100µF electrolytic capacitors,1,1.15,1.15,150,Power rail decoupling
 Local,,USB-C data cable,USB-C data cable (not charge-only),1,1.54,1.54,200,ESP32-S3 programming

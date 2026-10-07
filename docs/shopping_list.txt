@@ -42,7 +42,7 @@ PASSIVES
 16. Ceramic capacitor kit (10pF-100nF)               x1
 17. Electrolytic capacitor 10uF 25V                 x10
 18. Electrolytic capacitor 100uF 25V                 x5
-19. 10kΩ single-turn potentiometer                   x4
+19. 100kΩ single-turn potentiometer                   x4
 
 INDICATORS & MISC
 20. LED red                                          x5

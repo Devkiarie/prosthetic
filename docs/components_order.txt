@@ -18,7 +18,7 @@ COMPONENTS ORDER — ELECTRONICS
 16. Ceramic Capacitor Assortment          x1
 17. Electrolytic Capacitor 10uF 25V       x10
 18. Electrolytic Capacitor 100uF 25V      x5
-19. Potentiometer 100k ohm                x4
+19. Potentiometer 100kΩ (B100K)                x4
 20. LED Red                               x5
 21. LED Green                             x5
 22. Resistor 330 ohm                      x10
