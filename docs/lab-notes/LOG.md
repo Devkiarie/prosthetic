@@ -665,3 +665,18 @@ Key warnings from shopping trip:
 - 4d2ebd0: docs: session 22 log
 - c06797d: fix: untrack large binary files + expand .gitignore
 - e1a1d33: (post filter-repo rewrite head)
+
+## [2026-10-06] Session 24 | Component sourcing prep + git cleanup
+
+**Done:**
+- Proofed FYP_Shopping_Checklist.pdf against confirmed circuit specs
+- Fixed 3 errors in BOM files: potentiometer value confirmed 100kΩ (correct in PDF), C5194 adapter removed (buy INA128P/MCP6002 DIP-8 direct from AliExpress), added missing 82kΩ/33kΩ/100nF decoupling items
+- Added ECG snap lead wires (press-stud) to checklist — needed to connect electrodes to INA128
+- Confirmed electrode sourcing: Medstock KSh 750/50pcs (development), 3M Red Dot 2228 KSh 2,100/50pcs (demo)
+- Regenerated FYP_Shopping_Checklist.pdf (v3) with all corrections — saved to ~/Downloads/
+- Fixed git: untracked training_log_nobn.txt (448 lines, 1.1MB, regenerable), updated Ada submodule pointer, expanded .gitignore
+- Committed and pushed: 0fec45b
+
+**Measurements:** N/A (no hardware yet)
+**Pass/Fail:** N/A
+**Next session:** Breadboard M1 single-channel sEMG AFE — INA128 + Sallen-Key + twin-T notch. Measure SNR on oscilloscope.
