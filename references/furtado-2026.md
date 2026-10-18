@@ -2,7 +2,7 @@
 
 **Title:** Modular low-cost myoelectric hand
 **Journal:** IEEE IFEE, 2026
-**DOI verified:** No
+**DOI verified:** Yes — see references/doi_verification_log.md
 **Relevance:** See [[docs/proposal/FYP_Proposal_Ian_Kiarie#5. Related Studies]]
 
 ## Key Findings

@@ -1,7 +1,8 @@
 # Module 1: Analog Front-End
 
-**Status:** Simulation PASS (2026-09-25) — breadboard build starting 2026-10-07
+**Status:** Simulations PASS (2026-09-25) — KiCad schematic complete — awaiting components
 **Phase:** [[docs/COMPREHENSIVE_PLAN#D2|Block D2 -- Single-Channel Breadboard Build]]
+**Schematic:** `hardware/kicad/semg_afe.kicad_sch` (KiCad 9.0.8)
 **Simulation:** [[simulations/ina128-gain]], [[simulations/sallen-key-hpf]], [[simulations/sallen-key-lpf]], [[simulations/twin-t-notch]], [[simulations/full-chain]]
 
 ---

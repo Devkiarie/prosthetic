@@ -1,73 +1,58 @@
-# ML Step: MLP Training (sEMG Gesture Classifier)
+# ML: Model Training (MLP Gesture Classifier)
 
-**Status:** DONE — 2026-10-06
-**Script:** `ml/scripts/train_cnn_nobn.py` (via `/tmp/quantize_fix.py`)
-**Kernel:** FYP sEMG ML (Python 3.11, ml/venv)
+**Status:** DONE -- 2026-10-18 (train_v3.py slim MLP)
+**Script:** `ml/scripts/train_v3.py`
 
 ## Input
 
-- `ml/data/processed/X_balanced.npy`  shape (37308, 24)  float32
-- `ml/data/processed/y_balanced.npy`  shape (37308,)     int64
-- 8 classes, ~4,000–5,800 windows each
+- `ml/data/processed/X_balanced.npy`  shape (37,600, 24)  float32
+- `ml/data/processed/y_balanced.npy`  shape (37,600,)     int32
+- 8 classes, ~4,700 windows each (class-balanced)
 - Split: 70% train / 15% val / 15% test (stratified)
-- NinaPro DB5 channels: 0, 4, 8, 12 (4-channel hardware mapping)
-- Window: 50 samples at 200 Hz = 250 ms
+- Labels: `restimulus` (reaction-time-corrected -- NOT `stimulus`)
+- Window: 50 samples at 200 Hz = 250 ms (NinaPro DB5 native rate)
 
 ## Architecture (deployed)
 
-**MLP — no BatchNorm** (flat 24-vector input)
+**slim MLP** (24 -> 128 -> 64 -> 8)
 
 ```
-Input(24) → Dense(256, ReLU) → Dropout(0.3)
-          → Dense(256, ReLU) → Dropout(0.3)
-          → Dense(128, ReLU) → Dropout(0.2)
-          → Dense(8, Softmax)
+Input(24)
+  -> Dense(128, ReLU) -> BatchNormalization -> Dropout(0.3)
+  -> Dense(64, ReLU)  -> BatchNormalization -> Dropout(0.2)
+  -> Dense(8, Softmax)
 ```
 
-Why MLP not Conv1D: The 24-element input vector is heterogeneous (6 feature types ×
-4 channels interleaved). Conv1D would apply kernels across adjacent elements that have
-no local correlation (e.g. MAV_ch1 adjacent to RMS_ch1 are different feature types,
-not spatially related). MLP treats all 24 inputs independently, which is correct.
+## Training History
 
-Why no BatchNorm: TF+Keras3 BatchNorm ops produce MLIR type conflicts that SIGABRT
-the TFLite INT8 converter. Removed BatchNorm; F1 unchanged at 0.7907.
+| Run | F1 | Config | Notes |
+|---|---|---|---|
+| train_cnn_v2 (old) | 0.659 (INFLATED) | stimulus labels, no cross-subj split | Wrong |
+| train_v3 r1 | 0.437 | restimulus, correct split, but 500-sample window | Bug in windowing |
+| train_v3 r2 | 0.544 | restimulus, 50-sample window | Correct |
+| train_v3 r3 (512-unit) | 0.565 | larger model | 472 KB -- FAIL size |
+| **train_v3 slim (final)** | **0.601** | 128->64, 150 epochs | **38.2 KB PASS** |
 
-## Results
+## Key Bugs Found
 
-| Metric | Value |
-|---|---|
-| Test F1 (macro) | **0.7907** |
-| Test Accuracy | 0.7883 |
-| Baseline LDA | 0.42 |
-| Baseline SVM | 0.60 |
-| Baseline RF | 0.70 |
-| Target (pre-calibration) | 0.85 (post user calibration) |
+1. **`stimulus` vs `restimulus`**: `stimulus` has ~24% mislabelled windows at gesture
+   boundaries. Use `mat['restimulus']`. Impact: +10.7 F1 points.
 
-## Gesture–Finger Mapping (8 classes)
+2. **Wrong window size**: NinaPro DB5 is 200 Hz. 250 ms = 50 samples (not 500).
+   500 samples is correct for the ESP32 running at 2 kHz.
 
-| Class | Gesture | Finger Posture |
-|---|---|---|
-| 0 | Rest | All fingers extended |
-| 1 | Open Hand | All fingers extended (active) |
-| 2 | Power Grip | All fingers curled |
-| 3 | Pinch | Thumb + Index curl |
-| 4 | Point | Index extended, rest curled |
-| 5 | Wrist Flex | Wrist servo forward |
-| 6 | Wrist Extend | Wrist servo back |
-| 7 | Thumbs Up | Thumb extended, rest curled |
+3. **Data path**: Mat files are at `S{N}/s{N}/S{N}_E1_A1.mat` (lowercase inner dir).
 
-## Files
+## Hyperparameters (final)
 
-- Model: `ml/models/semg_mlp_nobn_float32.keras`
-- INT8:  `ml/models/semg_model_int8.tflite`
-- Header:`ml/models/semg_weights.h`
-- Stats: `ml/models/feature_mean.npy`, `ml/models/feature_std.npy`
-- Log:   `ml/models/training_log_nobn.txt`
+- Optimizer: Adam lr=1e-3
+- LR schedule: ReduceLROnPlateau factor=0.5, patience=10, min=1e-5
+- Early stopping: patience=20, restore_best_weights=True
+- Batch size: 64
+- Max epochs: 150
 
 ## Log
 
-- 2026-09-25: NinaPro DB5 data downloaded; X_balanced.npy ready (37308×24)
-- 2026-10-06: Conv1D v1 trained -- stuck at val_acc=0.50 (wrong arch, heterogeneous vector)
-- 2026-10-06: MLP v2 with BatchNorm -- F1=0.6589; INT8 SIGABRT
-- 2026-10-06: MLP no-BatchNorm -- **F1=0.7907**. Committed `629e731`.
-- 2026-10-06: INT8 quantized -- F1=0.7845, 123.7 KB. Committed `71472bf`.
+- 2026-09-25: First data exploration, 01_data_exploration.ipynb
+- 2026-10-06: train_cnn_v2.py -- F1=0.659 (known inflated, stimulus bug)
+- 2026-10-18: train_v3.py -- all bugs fixed, slim model final

@@ -2,7 +2,7 @@
 
 **Title:** Robotic prostheses review
 **Journal:** Sensors vol. 25, 2025
-**DOI verified:** No
+**DOI verified:** Yes — see references/doi_verification_log.md
 **Relevance:** See [[docs/proposal/FYP_Proposal_Ian_Kiarie#5. Related Studies]]
 
 ## Key Findings
