@@ -20,6 +20,5 @@ release-keystore.properties
 # Generated files
 app/src/main/assets/
 
-# Gradle
-gradle-wrapper.jar is committed intentionally
+# Gradle wrapper jar IS committed intentionally
 !gradle/wrapper/gradle-wrapper.jar

@@ -51,6 +51,13 @@ Thumbs.db
 # === Test data ===
 tests/subject_data/*/raw/
 
+# === Android ===
+android/MyoControl/app/build/
+android/MyoControl/.gradle/
+android/MyoControl/.idea/
+android/MyoControl/local.properties
+android/MyoControl/**/*.iml
+
 # LibreOffice lock files
 .~lock.*
 
@@ -59,3 +66,8 @@ hardware/simulation/*.raw
 
 # Redundant behavioral model (PSpice format, not needed for ngspice)
 hardware/simulation/models/INA128_behavioral.lib
+# PSpice files (Windows-only format, superseded by ngspice .lib)
+hardware/simulation/models/INA12x*
+hardware/simulation/models/*-PSpiceFiles/
+hardware/simulation/models/*.DSN
+hardware/simulation/models/*.OPJ
