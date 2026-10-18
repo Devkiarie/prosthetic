@@ -11,6 +11,7 @@
 | Document | Purpose |
 |---|---|
 | [[docs/COMPREHENSIVE_PLAN]] | Master plan — 8 blocks, every step laid out |
+| [[docs/WIRING_GUIDE]] | **Breadboard wiring reference — all connections, pin-by-pin** |
 | [[docs/lab-notes/DEVELOPMENT_LOG]] | Full development log — all sessions, errors, fixes |
 | [[docs/lab-notes/LOG]] | Lab notebook — every session logged |
 | [[docs/decisions/DECISIONS]] | Design rationale — why things are the way they are |
