@@ -1,0 +1,10 @@
+# PlatformIO build outputs
+.pio/
+.pioenvs/
+
+# Model weights (generated — DO NOT commit)
+model/semg_v3_weights.h
+
+# Local Python cache
+__pycache__/
+*.pyc
