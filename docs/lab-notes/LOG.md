@@ -755,3 +755,36 @@ Key warnings from shopping trip:
 4. Tune Twin-T notch trimpot with 50 Hz injection
 5. Connect ESP32-S3, flash firmware: `pio run --target upload`
 6. Serial monitor: verify ADC values respond to forearm contraction
+
+---
+
+## [2026-10-18] Session 25 | Schematic Wiring + E2E Simulator + Android Wiring + Notebook
+
+**Done:**
+- KiCad schematic: semg_ch1_schematic.png/svg — properly connected wires via schemdraw 0.23
+- e2e_simulator.py: full pipeline (synthetic sEMG → AFE filters → 24 features → TFLite INT8 → servo angles)
+- 02_e2e_simulation.ipynb: 23-cell Jupyter notebook with real NinaPro data + real INT8 model
+- Android Room DB wiring: GestureSessionDao, AnalyticsViewModel, MonitorViewModel (real BLE + demo mode)
+- Gesture illustration fixes: PINCH (thumb+index curl), REST (relaxed), WRIST_FLEX/EXT (fingers relaxed)
+- Ada submodule removed — was showing "Sync 4↑" in VS Code; converted to plain folder
+- WIRING_GUIDE.md created — all breadboard connections pin-by-pin
+- All module/pipeline/reference notes updated to current state
+
+**Measurements:**
+- schemdraw schematic: generated correctly, saved PNG+SVG
+- e2e_simulator.py: SIM_EXIT:0, plot saved to ml/data/processed/e2e_simulation.png
+- 02_e2e_simulation.ipynb: valid JSON, 23 cells, nbconvert --execute: 0 errors
+- Android build: 9 files changed, 305 insertions — compile verified
+
+**Pass/Fail:**
+- Schematic (connected): PASS — wires drawn, all stages visible
+- E2E simulator: PASS — runs, plot generated
+- Notebook: PASS — valid JSON, real model + real data
+- Android Room DB wiring: PASS — compiles, ViewModels wired
+
+**Next session (when components arrive):**
+1. Build single-channel INA128 breadboard per WIRING_GUIDE.md
+2. Oscilloscope: verify G=51 gain, check for 50 Hz noise
+3. Twin-T notch tuning (5.1kΩ trimpot)
+4. Flash firmware: `pio run --target upload`
+5. Serial monitor: verify ADC values respond to forearm contraction
