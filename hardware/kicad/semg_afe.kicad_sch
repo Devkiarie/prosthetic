@@ -1,0 +1,334 @@
+(kicad_sch
+  (version 20231120)
+  (generator "eeschema")
+  (generator_version "9.0")
+  (paper "A3")
+  (title_block
+    (title "sEMG 4-Channel Analog Front-End")
+    (date "2026-10-18")
+    (rev "v1.0")
+    (company "JKUAT ECE FYP — ENE212-0069/2022")
+    (comment 1 "Ian Kiarie — Supervisor: Dr. Irene")
+    (comment 2 "INA128 G=51 → Sallen-Key BPF (20-100Hz) → Twin-T Notch (50Hz) → Variable Gain → ESP32-S3 ADC1")
+    (comment 3 "Replicate U1-U5 block x4 for channels CH1-CH4")
+    (comment 4 "Supply: +9V battery → LM7805 → +5V analog; REF = 1.65V mid-rail from R_DIV")
+  )
+
+  (lib_symbols
+    (symbol "Device:R"
+      (pin_numbers (hide yes))
+      (pin_names (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "R" (at 1.524 0 0) (effects (font (size 1.27 1.27)) (justify left)))
+      (property "Value" "R" (at -1.524 0 0) (effects (font (size 1.27 1.27)) (justify right)))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+      (symbol "R_0_1"
+        (rectangle (start -1.016 -2.032) (end 1.016 2.032) (stroke (width 0.1524)) (fill (type none)))
+      )
+      (symbol "R_1_1"
+        (pin passive line (at 0 3.81 270) (length 1.778) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 0 -3.81 90) (length 1.778) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+    (symbol "Device:C"
+      (pin_numbers (hide yes))
+      (pin_names (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "C" (at 1.524 0 0) (effects (font (size 1.27 1.27)) (justify left)))
+      (property "Value" "C" (at -1.524 0 0) (effects (font (size 1.27 1.27)) (justify right)))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+      (property "Datasheet" "~" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+      (symbol "C_0_1"
+        (polyline (pts (xy -2.032 -0.762) (xy 2.032 -0.762)) (stroke (width 0.508)))
+        (polyline (pts (xy -2.032 0.762) (xy 2.032 0.762)) (stroke (width 0.508)))
+      )
+      (symbol "C_1_1"
+        (pin passive line (at 0 3.81 270) (length 3.048) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 0 -3.81 90) (length 3.048) (name "~" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+      )
+    )
+    (symbol "Amplifier_Instrumentation:INA128"
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "U" (at 0 10.16 0) (effects (font (size 1.27 1.27))))
+      (property "Value" "INA128" (at 0 7.62 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Package_DIP:DIP-8_W7.62mm" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+      (property "Datasheet" "https://www.ti.com/lit/ds/symlink/ina128.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+      (symbol "INA128_0_1"
+        (polyline (pts (xy -5.08 -7.62) (xy -5.08 7.62) (xy 5.08 0) (xy -5.08 -7.62)) (stroke (width 0.254)))
+        (pin input line (at -7.62 2.54 0) (length 2.54) (name "IN+" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+        (pin input line (at -7.62 -2.54 0) (length 2.54) (name "IN-" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+        (pin output line (at 7.62 0 180) (length 2.54) (name "OUT" (effects (font (size 1.27 1.27)))) (number "6" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at -2.54 -10.16 90) (length 2.54) (name "RG1" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 2.54 -10.16 90) (length 2.54) (name "RG2" (effects (font (size 1.27 1.27)))) (number "8" (effects (font (size 1.27 1.27)))))
+        (pin power_in line (at 0 10.16 270) (length 2.54) (name "V+" (effects (font (size 1.27 1.27)))) (number "7" (effects (font (size 1.27 1.27)))))
+        (pin power_in line (at 0 -10.16 90) (length 2.54) (name "V-" (effects (font (size 1.27 1.27)))) (number "4" (effects (font (size 1.27 1.27)))))
+        (pin input line (at 7.62 -5.08 180) (length 2.54) (name "REF" (effects (font (size 1.27 1.27)))) (number "5" (effects (font (size 1.27 1.27)))))
+      )
+    )
+    (symbol "Amplifier_Operational:MCP6002"
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "U" (at 0 7.62 0) (effects (font (size 1.27 1.27))))
+      (property "Value" "MCP6002" (at 0 5.08 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "Package_DIP:DIP-8_W7.62mm" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+      (property "Datasheet" "https://ww1.microchip.com/downloads/en/DeviceDoc/MCP6001-1R-1U-2-4-Data-Sheet-DS20001733L.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+      (symbol "MCP6002_0_1"
+        (polyline (pts (xy -3.81 -5.08) (xy -3.81 5.08) (xy 3.81 0) (xy -3.81 -5.08)) (stroke (width 0.254)))
+        (pin input line (at -6.35 2.54 0) (length 2.54) (name "IN+" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+        (pin input line (at -6.35 -2.54 0) (length 2.54) (name "IN-" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+        (pin output line (at 6.35 0 180) (length 2.54) (name "OUT" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin power_in line (at 0 7.62 270) (length 2.54) (name "VDD" (effects (font (size 1.27 1.27)))) (number "6" (effects (font (size 1.27 1.27)))))
+        (pin power_in line (at 0 -7.62 90) (length 2.54) (name "VSS" (effects (font (size 1.27 1.27)))) (number "4" (effects (font (size 1.27 1.27)))))
+      )
+    )
+    (symbol "power:VCC"
+      (property "Reference" "#PWR" (at 0 -1.905 0) (effects (font (size 1.27 1.27)) (hide yes)))
+      (property "Value" "VCC" (at 0 3.81 0) (effects (font (size 1.27 1.27))))
+      (symbol "VCC_0_1"
+        (pin power_in line (at 0 0 270) (length 0) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+      (symbol "VCC_1_1"
+        (polyline (pts (xy -1.27 0) (xy 1.27 0)) (stroke (width 0)))
+        (polyline (pts (xy 0 0) (xy 0 2.54)) (stroke (width 0)))
+      )
+    )
+    (symbol "power:GND"
+      (property "Reference" "#PWR" (at 0 -1.27 0) (effects (font (size 1.27 1.27)) (hide yes)))
+      (property "Value" "GND" (at 0 -3.81 0) (effects (font (size 1.27 1.27))))
+      (symbol "GND_0_1"
+        (pin power_in line (at 0 0 90) (length 0) (name "~" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+      )
+      (symbol "GND_1_1"
+        (polyline (pts (xy 0 0) (xy 0 -1.27)) (stroke (width 0)))
+        (polyline (pts (xy -1.27 -1.27) (xy 1.27 -1.27)) (stroke (width 0)))
+        (polyline (pts (xy -0.762 -2.032) (xy 0.762 -2.032)) (stroke (width 0)))
+        (polyline (pts (xy -0.254 -2.794) (xy 0.254 -2.794)) (stroke (width 0)))
+      )
+    )
+    (symbol "Device:R_POT"
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "RV" (at 2.286 0 0) (effects (font (size 1.27 1.27)) (justify left)))
+      (property "Value" "R_POT" (at 0 3.81 0) (effects (font (size 1.27 1.27))))
+      (symbol "R_POT_0_1"
+        (rectangle (start -1.016 -2.032) (end 1.016 2.032) (stroke (width 0.1524)) (fill (type none)))
+        (polyline (pts (xy 0 2.032) (xy 0 2.54) (xy 1.27 2.54) (xy 1.27 0)) (stroke (width 0.1524)))
+        (polyline (pts (xy 0.762 0.508) (xy 1.27 0) (xy 0.762 -0.508)) (stroke (width 0.1524)))
+      )
+      (symbol "R_POT_1_1"
+        (pin passive line (at 0 3.81 270) (length 1.27) (name "1" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 0 -3.81 90) (length 1.27) (name "2" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 2.54 0 180) (length 1.27) (name "3" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+      )
+    )
+    (symbol "Connector:Conn_01x03_Pin"
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "J" (at 1.905 0 0) (effects (font (size 1.27 1.27)) (justify left)))
+      (property "Value" "Conn_01x03_Pin" (at 0 -5.08 0) (effects (font (size 1.27 1.27))))
+      (symbol "Conn_01x03_Pin_1_1"
+        (pin passive line (at 0 2.54 0) (length 2.54) (name "Pin_1" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 0 0 0) (length 2.54) (name "Pin_2" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+        (pin passive line (at 0 -2.54 0) (length 2.54) (name "Pin_3" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+      )
+    )
+  )
+
+  (junction (at 50.8 50.8))
+  (junction (at 78.74 50.8))
+  (junction (at 106.68 50.8))
+  (junction (at 134.62 50.8))
+  (junction (at 50.8 43.18))
+
+  (no_connect (at 160.02 53.34))
+
+  (bus (pts (xy 10.16 10.16) (xy 10.16 180.34)))
+
+  (wire (pts (xy 30.48 50.8) (xy 40.64 50.8)))
+  (wire (pts (xy 40.64 50.8) (xy 40.64 48.26)))
+  (wire (pts (xy 40.64 53.34) (xy 40.64 50.8)))
+  (wire (pts (xy 60.96 50.8) (xy 78.74 50.8)))
+  (wire (pts (xy 88.9 50.8) (xy 106.68 50.8)))
+  (wire (pts (xy 116.84 50.8) (xy 134.62 50.8)))
+  (wire (pts (xy 144.78 50.8) (xy 162.56 50.8)))
+
+  (text "CH1 SIGNAL PATH (replicate x4 for CH1-CH4)"
+    (at 5.08 5.08 0)
+    (effects (font (size 2.54 2.54) (bold yes)) (justify left))
+  )
+
+  (text "ELECTRODE INPUT\n(Ag/AgCl differential pair)\n20mm inter-electrode spacing (SENIAM)"
+    (at 5.08 30.48 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+
+  (text "STAGE 1: INA128\nIn-Amp G=51\nRG=1kΩ 1% MF\n(pins 1-8)"
+    (at 40.64 20.32 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+
+  (text "STAGE 2: Sallen-Key\nHPF fc=20Hz\nC=470nF (film)\nR1=12kΩ, R2=24kΩ"
+    (at 68.58 20.32 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+
+  (text "STAGE 3: Twin-T\nNotch fc=50Hz\nR=10kΩ 1%, R/2=5.1kΩ\nC=330nF, 2C=680nF"
+    (at 96.52 20.32 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+
+  (text "STAGE 4: Var Gain\nMCP6002 x1-x10\nRV=100kΩ (B100K)\nAnti-alias LPF 100Hz"
+    (at 124.46 20.32 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+
+  (text "STAGE 5: ADC\nLevel-shift 1.65V\nSeries 1kΩ + 33nF\nESP32-S3 ADC1"
+    (at 152.4 20.32 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+
+  (symbol (lib_id "Amplifier_Instrumentation:INA128") (at 50.8 50.8 0) (unit 1)
+    (property "Reference" "U1" (at 50.8 63.5 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "INA128PA" (at 50.8 60.96 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Package_DIP:DIP-8_W7.62mm" (at 50.8 50.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
+    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/ina128.pdf" (at 50.8 50.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
+    (pin "3" (uuid "ina128-in-plus"))
+    (pin "2" (uuid "ina128-in-minus"))
+    (pin "6" (uuid "ina128-out"))
+    (pin "1" (uuid "ina128-rg1"))
+    (pin "8" (uuid "ina128-rg2"))
+    (pin "7" (uuid "ina128-vplus"))
+    (pin "4" (uuid "ina128-vminus"))
+    (pin "5" (uuid "ina128-ref"))
+  )
+
+  (symbol (lib_id "Device:R") (at 50.8 37.338 0) (unit 1)
+    (property "Reference" "R_G" (at 53.34 37.338 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "1kΩ 1% MF" (at 53.34 34.798 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:R") (at 27.94 48.26 0) (unit 1)
+    (property "Reference" "R_PROT1" (at 25.4 48.26 0) (effects (font (size 1.27 1.27)) (justify right)))
+    (property "Value" "10kΩ" (at 25.4 45.72 0) (effects (font (size 1.27 1.27)) (justify right)))
+  )
+
+  (symbol (lib_id "Device:R") (at 27.94 53.34 0) (unit 1)
+    (property "Reference" "R_PROT2" (at 25.4 53.34 0) (effects (font (size 1.27 1.27)) (justify right)))
+    (property "Value" "10kΩ" (at 25.4 50.8 0) (effects (font (size 1.27 1.27)) (justify right)))
+  )
+
+  (symbol (lib_id "Device:C") (at 78.74 63.5 0) (unit 1)
+    (property "Reference" "C_HPF1" (at 81.28 63.5 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "470nF film" (at 81.28 60.96 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:C") (at 88.9 57.15 0) (unit 1)
+    (property "Reference" "C_HPF2" (at 91.44 57.15 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "470nF film" (at 91.44 54.61 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:R") (at 83.82 50.8 0) (unit 1)
+    (property "Reference" "R_HPF1" (at 83.82 47.625 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "12kΩ" (at 83.82 45.085 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:R") (at 93.98 50.8 0) (unit 1)
+    (property "Reference" "R_HPF2" (at 93.98 47.625 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "24kΩ" (at 93.98 45.085 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:R") (at 111.76 43.18 0) (unit 1)
+    (property "Reference" "R_N1" (at 114.3 43.18 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "10kΩ 1%" (at 114.3 40.64 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:R") (at 121.92 43.18 0) (unit 1)
+    (property "Reference" "R_N2" (at 124.46 43.18 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "10kΩ 1%" (at 124.46 40.64 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:R") (at 116.84 55.88 0) (unit 1)
+    (property "Reference" "R_N_HALF" (at 119.38 55.88 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "5.1kΩ 1%" (at 119.38 53.34 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:C") (at 109.22 55.88 0) (unit 1)
+    (property "Reference" "C_N1" (at 106.68 55.88 0) (effects (font (size 1.27 1.27)) (justify right)))
+    (property "Value" "330nF 1%" (at 106.68 53.34 0) (effects (font (size 1.27 1.27)) (justify right)))
+  )
+
+  (symbol (lib_id "Device:C") (at 124.46 55.88 0) (unit 1)
+    (property "Reference" "C_N2" (at 126.99 55.88 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "330nF 1%" (at 126.99 53.34 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:C") (at 116.84 63.5 0) (unit 1)
+    (property "Reference" "C_N_DOUBLE" (at 119.38 63.5 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "680nF 1%" (at 119.38 60.96 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Amplifier_Operational:MCP6002") (at 144.78 50.8 0) (unit 1)
+    (property "Reference" "U2" (at 144.78 60.96 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "MCP6002" (at 144.78 58.42 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Package_DIP:DIP-8_W7.62mm" (at 144.78 50.8 0) (effects (font (size 1.27 1.27)) (hide yes)))
+  )
+
+  (symbol (lib_id "Device:R_POT") (at 157.48 50.8 0) (unit 1)
+    (property "Reference" "RV1" (at 160.02 50.8 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "100kΩ B100K" (at 160.02 48.26 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:R") (at 165.1 50.8 0) (unit 1)
+    (property "Reference" "R_AA" (at 167.64 50.8 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "1kΩ (ADC protect)" (at 167.64 48.26 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:C") (at 172.72 57.15 0) (unit 1)
+    (property "Reference" "C_AA" (at 175.26 57.15 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "33nF (anti-alias)" (at 175.26 54.61 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:R") (at 182.88 43.18 0) (unit 1)
+    (property "Reference" "R_DIV1" (at 185.42 43.18 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "10kΩ (REF divider top)" (at 185.42 40.64 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:R") (at 182.88 58.42 0) (unit 1)
+    (property "Reference" "R_DIV2" (at 185.42 58.42 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "10kΩ (REF divider bot)" (at 185.42 55.88 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Amplifier_Operational:MCP6002") (at 193.04 50.8 0) (unit 1)
+    (property "Reference" "U3" (at 193.04 60.96 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "MCP6002 (1.65V buf)" (at 193.04 58.42 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (text "ESP32-S3\nGPIO1 (ADC1_CH0) ← CH1\nGPIO2 (ADC1_CH1) ← CH2\nGPIO3 (ADC1_CH2) ← CH3\nGPIO4 (ADC1_CH3) ← CH4\nGND → Signal GND\n3.3V → R_DIV top"
+    (at 200.66 43.18 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+
+  (text "NOTE: Repeat U1-RV1 block for CH2 (GPIO2), CH3 (GPIO3), CH4 (GPIO4)\nU3 (1.65V buffer) is SHARED across all 4 channels\nAll INA128 REF pins connect to U3 output (1.65V)\nSupply: 9V battery → LM7805 → 5V → U1,U2,U3 VCC\nUse separate analog GND plane; join to digital GND at single star point"
+    (at 5.08 80.01 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+
+  (text "PCA9685 SERVO DRIVER (shared)\nVCC=5V, GND, SDA→GPIO8, SCL→GPIO9\nCH0-CH4: SG90 fingers (0°-180°)\nCH5: MG996R wrist\nPWM freq: 50Hz"
+    (at 5.08 100.33 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+
+  (text "COMPONENT REFERENCE SUMMARY\nR_G: 1kΩ 1% MF (G=51 for INA128) × 4\nR_PROT: 10kΩ × 8 (input protection, 2 per channel)\nC_HPF: 470nF film × 8 (Sallen-Key HPF, 2 per channel)\nR_HPF1: 12kΩ × 4; R_HPF2: 24kΩ × 4 (fc=20Hz)\nR_N1,R_N2: 10kΩ 1% × 8; R_N_HALF: 5.1kΩ 1% × 4 (Twin-T)\nC_N1,C_N2: 330nF 1% × 8; C_N_DOUBLE: 680nF 1% × 4 (Twin-T)\nRV1: 100kΩ B100K pot × 4 (variable gain)\nR_AA: 1kΩ × 4 (ADC series protection)\nC_AA: 33nF × 4 (anti-alias cutoff ~145kHz)\nR_DIV1,R_DIV2: 10kΩ × 2 (REF = 1.65V divider)\nU1: INA128PA DIP-8 × 4; U2: MCP6002 DIP-8 × 4; U3: MCP6002 (REF buffer, shared)"
+    (at 5.08 115.57 0)
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+
+)
