@@ -47,6 +47,12 @@ Thumbs.db
 *.mp4
 *.zip
 *.tar.gz
+# Ada Hand STL files (34MB total — source from Open Bionics or backup zip)
+hardware/hand_stl/Ada_3D_model_files/STLs/
+# Blender source files (large)
+hardware/hand_stl/Ada_3D_model_files/Blender Files/
+hardware/hand_stl/modified/*.blend
+hardware/hand_stl/modified/*.blend1
 
 # === Test data ===
 tests/subject_data/*/raw/
