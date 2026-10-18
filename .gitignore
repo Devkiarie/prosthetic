@@ -1,22 +1,24 @@
 # === Python / ML ===
 ml/venv/
 ml/data/ninapro_db5/          # NinaPro is large + license restricts redistribution
-ml/data/processed/*.npy        # Regenerable from scripts
-ml/models/*.keras              # Large float32 models
-ml/models/*.tflite             # TFLite binaries -- too large for GitHub
-ml/models/*.npy                # Normalisation stats -- regenerable
-ml/models/*.pkl                # Sklearn baseline models
+ml/data/processed/*.npy        # Regenerable from train_v3.py
+ml/models/*.keras              # Large float32 models — regenerable
+ml/models/*.tflite             # Binaries — firmware/model/ has the canonical copy
+ml/models/*.npy                # Normalisation stats — regenerable
+ml/models/*.pkl                # Sklearn baseline models — regenerable
 ml/models/*.h5
-ml/models/training_log*.txt    # Training logs -- regenerable
-ml/models/training_log_nobn.txt  # Also untracked explicitly
-ml/models/semg_weights.h       # C header -- regenerable from model
+ml/models/training_log*.txt    # Training logs — regenerable
+ml/models/semg_weights.h       # Old C header
+ml/models/semg_v3_weights.h    # C header — canonical copy is firmware/model/
+ml/models/*_saved_model/       # SavedModel dirs — regenerable intermediates
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
 # === PlatformIO / Firmware ===
-firmware/.pio/
+firmware/.pio/                 # Build cache (large, regenerable)
 firmware/.vscode/
+firmware/model/semg_v3_weights.h  # Generated C array — regenerable, 235KB
 
 # === KiCad ===
 hardware/kicad/*-backups/
@@ -41,22 +43,19 @@ Thumbs.db
 *~
 .vscode/
 
-# === Large binaries (track with Git LFS or keep out) ===
+# === Large binaries ===
 *.mp4
 *.zip
 *.tar.gz
 
-# === Test data (large, per-subject recordings) ===
-tests/subject_data/*/raw/      # Raw ADC CSVs can be huge
+# === Test data ===
+tests/subject_data/*/raw/
 
 # LibreOffice lock files
 .~lock.*
 
-# ngspice output files
+# ngspice output (duplicated rule — safe to keep both)
 hardware/simulation/*.raw
 
-# Redundant/superseded model files
+# Redundant behavioral model (PSpice format, not needed for ngspice)
 hardware/simulation/models/INA128_behavioral.lib
-
-# ML venv (large, not committed)
-ml/venv/
