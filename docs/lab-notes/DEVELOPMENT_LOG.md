@@ -483,3 +483,92 @@ All 8 references confirmed against actual paper titles:
 ---
 *Log maintained by Alfred (Hermes Agent). Updated after every session.*
 *Last updated: 2026-10-18*
+
+---
+
+## SESSIONS 09–15 — 2026-09-25: Android App Build Fixes + UI
+
+### Session 09 — Gradle/KSP Version Fix
+**Error E03b:** `Plugin [id: 'com.google.devtools.ksp', version: '2.2.0-1.0.29'] was not found`
+**Root cause:** KSP 2.2.0 artifacts not yet published to Maven/Google repos (lag behind Kotlin release).
+**Fix:** Downgraded `libs.versions.toml`: kotlin `2.2.0 → 2.1.0`, ksp `2.2.0-1.0.29 → 2.1.0-1.0.29`.
+
+### Session 10 — Build Errors Fixed
+**Error E03c:** `checkDebugAarMetadata FAILED` — AGP 8.7.3 only tested to compileSdk=35, we had 36.
+**Fix:** `compileSdk = 36 → 35`, `targetSdk = 36 → 35` in `app/build.gradle.kts`.
+**Error E03d:** Gradle GC thrashing (512 MB heap).
+**Fix:** `gradle.properties` — `org.gradle.jvmargs=-Xmx2048m`, enabled caching + parallel builds.
+
+### Session 11 — Launcher Icon Assets
+**Error E03e:** `mipmap/ic_launcher not found (AAPT)` — scaffold never created `res/mipmap-*` folders.
+**Fix:** Generated solid-cyan placeholder PNGs via stdlib Python for all 5 density buckets. Created `mipmap-anydpi-v26` adaptive icon XMLs. Background: `#0A0F1E`.
+
+### Session 12 — Theme Rework
+Design: cream default (`#F9F6F2` bg) + FM absolute black dark (`#080808` bg).
+Added: warm peach gradient hero card, semantic colour aliases, decorative pastel blob colours.
+Commit: `f9871a7`.
+
+### Session 13 — BLE SecurityException + Settings Screen
+**Error E03f:** `SecurityException: Need BLUETOOTH_SCAN permission` on API ≥31 devices.
+**Fix:** Added `rememberBlePermissionRequest()` composable — requests `BLUETOOTH_SCAN`, `BLUETOOTH_CONNECT`, `ACCESS_FINE_LOCATION` at runtime before calling `BleManager.startScan()`.
+Also added legacy `BLUETOOTH` + `BLUETOOTH_ADMIN` permissions (maxSdkVersion=30) for pre-API31.
+
+### Session 14 — Canvas Gesture Illustrations + BLE Device Picker
+Built `GestureIllustration.kt` — pure Compose Canvas hand drawing, no image assets. 8 animated poses with finger curl (0°=open, 180°=closed) via 500ms tween.
+Built `BleDevicePicker.kt` — ModalBottomSheet with RSSI colour coding, device list, cancel button.
+
+### Session 15 — BLE Picker Dismiss Fix
+**Error E03g:** X button didn't close the picker; scrim overlay stayed, eating all touch events.
+**Root cause 1:** `showPicker = isScanning || devices.isNotEmpty()` — devices remained after scan stop.
+**Root cause 2:** `ModalBottomSheet` rendered outside main `Box` → full-screen scrim orphaned in tree.
+**Fix:** `showPicker` changed to `mutableStateOf(false)` controlled by `LaunchedEffect`. Set false explicitly on X tap, device tap, and disconnect.
+
+---
+
+## SESSIONS 16–20 — 2026-09-25: Actuator Decision + 3D Hand
+
+### Session 16 — Actuator Upgrade Decision
+**Decision:** 2-DOF gripper (2× MG996R) → 5-finger tendon-driven hand (5× SG90 + 1× MG996R).
+**Rationale:** Same sEMG pipeline, same BOM cost (~KES 650 delta, still under $20 BOM). PCA9685 handles 16 channels so no hardware change. More compelling demo.
+Files updated: `modules/actuator-hand.md`, `05_BOM_AND_PROCUREMENT.md`, `docs/COMPREHENSIVE_PLAN.md`.
+
+### Session 17 — Ada Hand v1.1 STLs + 3D Tools
+Downloaded Open Bionics Ada Hand v1.1 STLs → `hardware/hand_stl/Ada_3D_model_files/` (git submodule).
+Palm: 174×193×42mm — fits SG90 servos (29mm tall).
+Tools installed: Blender 5.2.2 (snap), OpenSCAD (apt), numpy-stl, trimesh.
+
+### Session 18 — Wrap-Up
+
+### Session 19 — Blender Format Conversion
+**Error E03h:** Ada Right v1.1.blend crashes Blender 5.2 — Blender 2.7x format incompatibility.
+**Fix:** Downloaded Blender 4.2 LTS portable (no sudo), opened old file, exported all 30 mesh objects as STLs, deleted 4.2 portable after. Blender 5.2 imports extracted STLs cleanly.
+Extracted STLs saved to `hardware/hand_stl/Ada_3D_model_files/STLs/Right Hand/extracted/`.
+
+### Session 20 — Hand Rigging + Animation
+- Opened `Ada_Right_v2_full.blend` in Blender 5.2 — full hand assembled
+- Added HandRig armature (5 bones), parented all 5 finger meshes (BONE parenting)
+- Keyframed open→fist→open: frame1=open, frame30=80° curl, frame60=open
+- Saved as `Ada_Right_v4_animated.blend` (active file for all design work)
+
+**Blender pitfalls discovered:**
+- Armature bones animate but meshes stay frozen if `parent_type = 'BONE'` not explicitly set
+- Must set mesh world matrix: `mesh.matrix_world = world_mat` before parenting then restore after
+- `--headless` is not a valid Blender flag (treats it as file path) — use `-b` for background mode
+
+---
+
+## Error Registry Additions (Sessions 09–20)
+
+| # | Date | Error | Root Cause | Fix | Impact |
+|---|---|---|---|---|---|
+| E14 | 09-25 | KSP 2.2.0-1.0.29 not found | Not yet published to Maven | Downgrade kotlin+ksp to 2.1.0 | Android app builds |
+| E15 | 09-25 | checkDebugAarMetadata FAILED | compileSdk=36 exceeds AGP 8.7.3 limit | compileSdk=35 | Android app builds |
+| E16 | 09-25 | Gradle GC thrashing | 512 MB heap too small | gradle.properties Xmx2048m | Build stability |
+| E17 | 09-25 | AAPT launcher icon not found | Scaffold missed res/mipmap-* folders | Generated PNG placeholders via Python | App runs on device |
+| E18 | 09-25 | BLE SecurityException | Missing runtime BLUETOOTH_SCAN permission | rememberBlePermissionRequest() composable | BLE scan works |
+| E19 | 09-25 | BLE picker scrim stays on screen | showPicker used reactive isScanning — didn't clear | Changed to mutableStateOf(false), explicitly clear | Picker dismisses correctly |
+| E20 | 09-25 | Ada v1.1.blend crashes Blender 5.2 | Blender 2.7x binary format incompatible | Blender 4.2 LTS conversion → STL export | 3D hand design unblocked |
+| E21 | 09-25 | Blender bones animate but meshes frozen | parent_type not set to 'BONE' | mesh.parent_type = 'BONE'; restore world matrix | Hand animation works |
+
+---
+*Log maintained by Alfred (Hermes Agent). Updated 2026-10-18 — sessions 09-20 backfilled from LOG.md and git history.*
