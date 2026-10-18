@@ -19,47 +19,23 @@ import com.ian.myocontrol.core.theme.McColors
 import kotlin.math.*
 import kotlin.random.Random
 
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.collectAsState
+
 /**
  * MonitorScreen — live sEMG signal visualisation.
  *
- * While hardware is not connected this screen shows a animated
- * synthetic sEMG waveform to demonstrate what the live view will look like.
- * When the ESP32-S3 is connected, BleManager.CHAR_RAW_STREAM data replaces
- * the synthetic signal (Phase 3 integration).
- *
- * Shows:
- * - 4-channel rolling waveform (one row per channel)
- * - Channel labels (FCR, ED, FDS, BR)
- * - Signal quality indicator per channel
- * - Sampling rate + window info badge
+ * Wired to MonitorViewModel which provides:
+ * - Real BLE SignalMetrics when ESP32-S3 is connected
+ * - Synthetic waveform in demo mode (shows what live signal looks like)
  */
 @Composable
-fun MonitorScreen() {
-    // Synthetic waveform state — 200 samples history per channel
-    val historySize = 200
-    val channelHistory = remember {
-        List(4) { ArrayDeque<Float>(historySize).also { dq -> repeat(historySize) { dq.addLast(0f) } } }
-    }
-
-    // Tick counter drives the fake waveform
-    var tick by remember { mutableIntStateOf(0) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            kotlinx.coroutines.delay(20L) // ~50 Hz update
-            tick++
-            val t = tick * 0.08f
-            // Simulate 4-channel sEMG: noise + periodic burst pattern
-            channelHistory.forEachIndexed { ch, dq ->
-                val phaseOffset = ch * PI.toFloat() / 2f
-                val burst   = if (sin(t * 0.3f + phaseOffset) > 0.4f) 1f else 0f
-                val signal  = burst * (0.6f + 0.4f * sin(t * 12f + phaseOffset) +
-                              0.2f * sin(t * 25f + phaseOffset + 1f))
-                val noise   = (Random.nextFloat() - 0.5f) * 0.08f
-                if (dq.size >= historySize) dq.removeFirst()
-                dq.addLast((signal + noise).coerceIn(-1f, 1.5f))
-            }
-        }
-    }
+fun MonitorScreen(viewModel: MonitorViewModel = hiltViewModel()) {
+    val state by viewModel.uiState.collectAsState()
+    val channelHistory = state.channelHistory
+    val signalMetrics  = state.signalMetrics
+    val isFakeMode     = state.isFakeMode
+    val currentGesture = state.currentGesture
 
     val channelNames = listOf("CH1 — FCR", "CH2 — ED", "CH3 — FDS", "CH4 — BR")
     val channelColors = listOf(

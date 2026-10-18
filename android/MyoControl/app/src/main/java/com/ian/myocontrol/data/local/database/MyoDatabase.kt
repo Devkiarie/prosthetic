@@ -2,6 +2,7 @@ package com.ian.myocontrol.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.ian.myocontrol.data.local.dao.GestureSessionDao
 import com.ian.myocontrol.data.local.entity.GestureSessionEntity
 
 @Database(
@@ -10,5 +11,5 @@ import com.ian.myocontrol.data.local.entity.GestureSessionEntity
     exportSchema = false
 )
 abstract class MyoDatabase : RoomDatabase() {
-    // DAOs will be added in Phase 4 (calibration) and Phase 5 (analytics)
+    abstract fun gestureSessionDao(): GestureSessionDao
 }

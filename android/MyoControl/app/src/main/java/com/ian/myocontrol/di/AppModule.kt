@@ -2,6 +2,7 @@ package com.ian.myocontrol.di
 
 import android.content.Context
 import androidx.room.Room
+import com.ian.myocontrol.data.local.dao.GestureSessionDao
 import com.ian.myocontrol.data.local.database.MyoDatabase
 import dagger.Module
 import dagger.Provides
@@ -22,4 +23,9 @@ object AppModule {
             MyoDatabase::class.java,
             "myocontrol.db"
         ).build()
+
+    @Provides
+    @Singleton
+    fun provideGestureSessionDao(db: MyoDatabase): GestureSessionDao =
+        db.gestureSessionDao()
 }

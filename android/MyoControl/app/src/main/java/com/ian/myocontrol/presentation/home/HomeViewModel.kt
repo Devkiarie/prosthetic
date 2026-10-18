@@ -3,6 +3,8 @@ package com.ian.myocontrol.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ian.myocontrol.core.ble.BleManager
+import com.ian.myocontrol.data.local.dao.GestureSessionDao
+import com.ian.myocontrol.data.local.entity.GestureSessionEntity
 import com.ian.myocontrol.domain.model.BleConnectionState
 import com.ian.myocontrol.domain.model.BleDeviceInfo
 import com.ian.myocontrol.domain.model.GestureLabel
@@ -27,7 +29,8 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val bleManager: BleManager
+    private val bleManager: BleManager,
+    private val gestureDao: GestureSessionDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -83,6 +86,15 @@ class HomeViewModel @Inject constructor(
                             correctCount.toFloat() / gestureCount * 100f else 0f
                     )
                 }
+                // Persist to Room DB for analytics
+                gestureDao.insert(
+                    GestureSessionEntity(
+                        timestampMs  = result.timestampMs,
+                        gestureClass = result.gestureClass,
+                        confidence   = result.confidence,
+                        latencyMs    = result.latencyMs
+                    )
+                )
             }
         }
         viewModelScope.launch {

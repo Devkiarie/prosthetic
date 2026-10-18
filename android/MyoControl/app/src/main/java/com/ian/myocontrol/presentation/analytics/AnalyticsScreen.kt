@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,28 +32,38 @@ import com.ian.myocontrol.domain.model.GestureLabel
  * Phase 5: wire to Room DB GestureSessionEntity for real accumulated stats.
  */
 
+import androidx.hilt.navigation.compose.hiltViewModel
+
 private val GESTURE_NAMES = GestureLabel.values().map { it.displayName }
 
 @Composable
-fun AnalyticsScreen() {
-    // Simulated stats (replace with Room DB query in Phase 5)
-    val perGestureAccuracy = remember {
+fun AnalyticsScreen(viewModel: AnalyticsViewModel = hiltViewModel()) {
+    val state by viewModel.uiState.collectAsState()
+
+    // When we have real data, show it; otherwise show simulated layout
+    val perGestureAccuracy = if (state.hasData) {
+        val total = state.gestureCounts.sum().coerceAtLeast(1)
+        GESTURE_NAMES.mapIndexed { i, name ->
+            name to (state.gestureCounts.getOrElse(i) { 0 }.toFloat() / total)
+        }.toMap()
+    } else {
         mapOf(
             "Rest" to 0.87f, "Open Hand" to 0.72f, "Power Grasp" to 0.81f,
             "Pinch" to 0.68f, "Point" to 0.74f, "Wrist Flex" to 0.83f,
             "Wrist Extend" to 0.80f, "Thumbs Up" to 0.75f
         )
     }
-    val overallAccuracy = perGestureAccuracy.values.average().toFloat()
-    val sessionCount = 3
+    val overallAccuracy = if (state.hasData) state.averageConfidence
+                          else perGestureAccuracy.values.average().toFloat()
+    val sessionCount = if (state.hasData) state.totalPredictions else 3
 
-    // Simulated confusion matrix (8x8 normalised)
+    // Confusion matrix (simulated — real confusion matrix needs per-prediction truth labels)
     val confMatrix = remember {
         Array(8) { row -> FloatArray(8) { col ->
             when {
-                row == col -> 0.65f + (row * 0.03f) % 0.25f  // diagonal = correct
-                (row == 0 && col == 1) || (row == 1 && col == 0) -> 0.12f  // rest/open confusion
-                (row == 3 && col == 2) || (row == 2 && col == 3) -> 0.08f  // pinch/power
+                row == col -> 0.65f + (row * 0.03f) % 0.25f
+                (row == 0 && col == 1) || (row == 1 && col == 0) -> 0.12f
+                (row == 3 && col == 2) || (row == 2 && col == 3) -> 0.08f
                 else -> (0.02f + (row * col * 0.003f) % 0.04f)
             }
         }}

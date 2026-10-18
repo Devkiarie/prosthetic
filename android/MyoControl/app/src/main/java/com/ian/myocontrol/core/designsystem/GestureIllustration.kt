@@ -209,12 +209,21 @@ private data class FingerSpec(
 )
 
 private fun fingerSpec(g: GestureLabel): FingerSpec = when (g) {
-    GestureLabel.REST        -> FingerSpec(0.10f, 0.10f, 0.10f, 0.10f, 0.10f)
+    // REST: all fingers very slightly curled (relaxed, not rigid)
+    GestureLabel.REST        -> FingerSpec(0.15f, 0.20f, 0.20f, 0.22f, 0.25f)
+    // OPEN HAND: all fully extended and spread
     GestureLabel.OPEN_HAND   -> FingerSpec(0.00f, 0.00f, 0.00f, 0.00f, 0.00f)
-    GestureLabel.POWER_GRASP -> FingerSpec(0.92f, 0.95f, 0.95f, 0.95f, 0.95f)
-    GestureLabel.PINCH       -> FingerSpec(0.05f, 0.05f, 0.90f, 0.92f, 0.92f)
-    GestureLabel.POINT       -> FingerSpec(0.88f, 0.00f, 0.92f, 0.92f, 0.92f)
-    GestureLabel.WRIST_FLEX  -> FingerSpec(0.10f, 0.10f, 0.10f, 0.10f, 0.10f, wristAngle = 28f)
-    GestureLabel.WRIST_EXT   -> FingerSpec(0.10f, 0.10f, 0.10f, 0.10f, 0.10f, wristAngle = -28f)
+    // POWER GRASP: full fist — all fingers tightly closed, thumb wraps over
+    GestureLabel.POWER_GRASP -> FingerSpec(0.88f, 0.95f, 0.95f, 0.95f, 0.95f)
+    // PINCH: thumb + index curl toward each other, rest extended
+    // (not middle/ring/pinky closing — that's a fist, not a pinch)
+    GestureLabel.PINCH       -> FingerSpec(0.82f, 0.78f, 0.18f, 0.20f, 0.22f)
+    // POINT: index extended, rest curled (including thumb tucked)
+    GestureLabel.POINT       -> FingerSpec(0.75f, 0.00f, 0.90f, 0.92f, 0.92f)
+    // WRIST FLEX: fingers relaxed but not rigid, whole hand tilts forward
+    GestureLabel.WRIST_FLEX  -> FingerSpec(0.18f, 0.22f, 0.22f, 0.25f, 0.28f, wristAngle = 30f)
+    // WRIST EXT: fingers relaxed, whole hand tilts back
+    GestureLabel.WRIST_EXT   -> FingerSpec(0.18f, 0.22f, 0.22f, 0.25f, 0.28f, wristAngle = -30f)
+    // THUMBS UP: thumb fully extended upward, fingers tightly curled
     GestureLabel.THUMBS_UP   -> FingerSpec(0.00f, 0.92f, 0.92f, 0.92f, 0.92f)
 }
