@@ -572,3 +572,56 @@ Extracted STLs saved to `hardware/hand_stl/Ada_3D_model_files/STLs/Right Hand/ex
 
 ---
 *Log maintained by Alfred (Hermes Agent). Updated 2026-10-18 — sessions 09-20 backfilled from LOG.md and git history.*
+
+---
+
+## SESSION 25 — 2026-10-18: Schematic Wiring + E2E Simulator + Android Wiring
+
+### Issues Addressed
+1. KiCad PDF schematic showed labels/annotations but no drawn wires
+2. No end-to-end simulation without hardware
+3. Android app had unfinished screen stubs + generic gesture poses
+4. Ada Hand submodule showing "Sync Changes 4↑" in VS Code Git GUI
+
+### Fixes
+
+#### Schematic (hardware/kicad/)
+- `semg_ch1_schematic.png/svg` — schemdraw-generated properly connected circuit diagram
+- All wires drawn: Electrode → R_PROT → INA128 → HPF → Notch → Var Gain → ADC
+- Tool: `ml/scripts/draw_schematic.py` (schemdraw 0.23)
+
+#### E2E Simulator (ml/scripts/e2e_simulator.py)
+- Stage 1: Synthetic sEMG per gesture (anatomically-motivated per-channel activations)
+- Stage 2: AFE model (scipy butter HPF + LPF + iirnotch)
+- Stage 3: Feature extraction (exact match to firmware features.h)
+- Stage 4: TFLite INT8 inference
+- Stage 5: Servo angle output (PCA9685 posture table)
+- Plot: `ml/data/processed/e2e_simulation.png`
+
+#### Android App
+- `GestureIllustration.kt`: fixed gesture poses:
+  - PINCH: was middle/ring/pinky close (wrong). Now thumb+index curl toward each other
+  - REST: natural relaxed curl (was all identical 0.10)
+  - WRIST_FLEX/EXT: fingers relaxed not rigid
+- `GestureSessionDao.kt`: Room DAO with flow queries (per-gesture counts, avg confidence, avg latency)
+- `MyoDatabase.kt`: added abstract gestureSessionDao()
+- `AppModule.kt`: provide GestureSessionDao via Hilt
+- `MonitorViewModel.kt` (new): real BLE SignalMetrics + synthetic demo mode
+- `MonitorScreen.kt`: wired to MonitorViewModel via hiltViewModel()
+- `AnalyticsViewModel.kt` (new): Room DB queries via combine()
+- `AnalyticsScreen.kt`: shows real Room DB data when available, falls back to simulated
+- `HomeViewModel.kt`: persists every BLE gesture result to Room DB
+
+#### Ada Submodule Fix
+- Removed Ada_3D_model_files as git submodule (was showing "Sync 4↑" — 4 unpushable commits)
+- Converted to plain folder with README.md (STLs gitignored — too large)
+- Modified palm STL tracked separately: `hardware/hand_stl/modified/5th_Palm_with_servo_pockets.stl`
+- VS Code Git GUI now shows single repo, no Ada panel
+
+### Error Registry
+| # | Error | Root Cause | Fix |
+|---|---|---|---|
+| E22 | schemdraw Wire('n|-') fails | LTspice/KiCad notation not supported | Use explicit Line up/left/down routing |
+| E23 | schemdraw Dot().length() fails | Dot has no length method | Use Line().down().length() for positioning |
+| E24 | schemdraw get_figure() fails | Drawing.get_figure() doesn't exist | Use Drawing.save() directly |
+| E25 | Ada "Sync 4↑" in Git GUI | Submodule had 4 commits pointing to someone else's repo | Remove submodule, convert to plain folder |
